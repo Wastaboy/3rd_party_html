@@ -210,7 +210,7 @@
         <div class="fx"><button class="copy" type="button">Copy</button><code>"Select the application status"</code></div>
         <p class="fxlabel">drpHandover · Tooltip</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>"Select the handover status"</code></div>
-        <p class="do">While you're here, confirm each of the four dropdowns still has <strong>AllowEmptySelection</strong> set to <code class="cc">true</code> (from Part 1).</p>
+        <p class="do">While you're here, re-check <strong>AllowEmptySelection</strong> on all four: select <code class="cc">drpIAMRole</code> → property dropdown → <strong>AllowEmptySelection</strong> — the formula bar must read <code class="cc">true</code>. If it reads <code>false</code>, Ctrl+A → type <code class="cc">true</code>. Repeat for <code class="cc">drpDivision</code>, <code class="cc">drpStatus</code> and <code class="cc">drpHandover</code>.</p>
         <div class="note why"><b>Why AllowEmptySelection matters so much</b>Without it, a classic dropdown auto-selects its first item — every new row would arrive with "Manage" pre-chosen, and the mandatory-field validation you're about to build could never catch an untouched dropdown. Empty-until-chosen is what makes "required" real.</div>
         <div class="note check"><b>Check before moving on</b>In Preview: hovering each dropdown shows its tooltip, and a freshly added row (＋ Add System) shows all four dropdowns <em>blank</em> — nothing pre-selected.</div>
         <button class="done" type="button">Mark step done</button>
@@ -252,7 +252,8 @@
     <details class="step" id="b4">
       <summary><span class="dot"></span><span class="num">B4</span><span class="stitle">The Submit button and the form-level error label</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
       <div class="body">
-        <p class="do"><strong>a) The button.</strong> Click <code class="cc">scrMain</code> in the Tree view (so the button lands on the screen, not inside the gallery), then <strong>Insert → Button</strong>. Double-click its name in the Tree view and paste <code class="cc">btnSubmit</code>. Sit it at the right end of your footer bar from Part 1, next to <code class="cc">btnAddSystem</code> — X <code class="cc">1160</code> · Y <code class="cc">712</code> · Width <code class="cc">180</code> · Height <code class="cc">44</code> (nudge a few pixels to sit tidily in <code class="cc">recFooter</code>).</p>
+        <p class="do"><strong>a) The button.</strong> Click <code class="cc">scrMain</code> in the Tree view (so the button lands on the screen, not inside the gallery), then <strong>+ Insert</strong> (left rail) → type <code class="cc">Button</code> in the search box → click it. Double-click its name in the Tree view and paste <code class="cc">btnSubmit</code>. Position it via the <strong>Properties pane</strong> on the right → Position → X <code class="cc">1160</code> · Y <code class="cc">712</code>, Size → Width <code class="cc">180</code> · Height <code class="cc">44</code>. It should sit fully on the dark footer bar next to <code class="cc">btnAddSystem</code> — if it doesn't, check that <code class="cc">recFooter</code>'s Y is <code class="cc">692</code>.</p>
+        <p class="do">Three properties, each via the property dropdown (top-left, next to the <code class="cc">fx</code> bar) → select the property → <strong>Ctrl+A</strong> → paste (Text keeps its quotes):</p>
         <dl class="props">
           <div><dt>Text</dt><dd><code class="cc">"Submit Declaration"</code></dd></div>
           <div><dt>Fill</dt><dd><code class="cc">gblColorBrand</code></dd></div>
@@ -261,7 +262,8 @@
         <p class="do">Property dropdown → <strong>DisplayMode</strong> → Ctrl+A → paste:</p>
         <p class="fxlabel">btnSubmit · DisplayMode</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>If(CountRows(colSystems) = 0 || gblSubmitting, DisplayMode.Disabled, DisplayMode.Edit)</code></div>
-        <p class="do"><strong>b) The label.</strong> With <code class="cc">scrMain</code> selected again, <strong>Insert → Text label</strong>. Rename it <code class="cc">lblFormError</code>. Place it in the footer to the left of the button — X <code class="cc">500</code> · Y <code class="cc">718</code> · Width <code class="cc">640</code> · Height <code class="cc">32</code>.</p>
+        <p class="do"><strong>b) The label.</strong> Click <code class="cc">scrMain</code> in the Tree view again, then <strong>+ Insert</strong> → type <code class="cc">Text label</code> in the search box → click it. Double-click its name in the Tree view and paste <code class="cc">lblFormError</code>. Properties pane → Position → X <code class="cc">500</code> · Y <code class="cc">718</code>, Size → Width <code class="cc">640</code> · Height <code class="cc">32</code>.</p>
+        <p class="do">Two properties via the property dropdown → select → Ctrl+A → paste:</p>
         <dl class="props">
           <div><dt>Color</dt><dd><code class="cc">Color.Red</code></dd></div>
           <div><dt>Text</dt><dd><code class="cc">""</code> — for now; B8 wires the real formula</dd></div>
@@ -285,7 +287,7 @@ If(
         <div class="note why"><b>How the gate reads</b>First it switches error display on (<code>gblShowErrors</code> — the red borders and messages of B6–B8 key off it). Then it counts invalid rows: a row fails if <em>any</em> of the 14 fields is blank, if the Access Link isn't URL-shaped, or if Number of Accounts isn't a whole number. Only a declaration with <strong>zero</strong> invalid rows sets <code>gblShowConfirm</code> — the confirmation popup you build in Part 3.</div>
         <div class="note warn"><b>The URL pattern must stay a literal</b><code>IsMatch</code> only accepts a pattern typed directly into the formula — never move the regex into a variable "to tidy up"; it will stop compiling. The pattern is deliberately lenient: real inventory entries include bare domains like <code class="cc">stc.com.bh</code>, and those should pass.</div>
         <div class="note tip"><b>A valid click does nothing visible yet — that's expected</b><code>gblShowConfirm</code> flips to true but no popup exists until Part 3. Nothing is broken.</div>
-        <div class="note check"><b>Check before moving on</b>In Preview with an incomplete row: click Submit Declaration → no popup, and the Variables pane (three-dots menu → Variables) shows <code>gblShowErrors = true</code>, <code>gblShowConfirm = false</code>. Fill one row completely — all four dropdowns chosen, Access Link <code>https://example.com</code>, Number of Accounts <code>5</code> — click again → <code>gblShowConfirm = true</code>. Then run OnStart (App → Run OnStart) to reset the flags; it re-seeds the gallery to one blank row, which is expected while building.</div>
+        <div class="note check"><b>Check before moving on</b>In Preview with an incomplete row: click Submit Declaration → no popup, and the Variables pane (three-dots menu → Variables) shows <code>gblShowErrors = true</code>, <code>gblShowConfirm = false</code>. Fill one row completely — all four dropdowns chosen, Access Link <code class="cc">https://example.com</code>, Number of Accounts <code class="cc">5</code> — click again → <code>gblShowConfirm = true</code>. Then run OnStart (App → Run OnStart) to reset the flags; it re-seeds the gallery to one blank row, which is expected while building.</div>
         <button class="done" type="button">Mark step done</button>
       </div>
     </details>
@@ -296,20 +298,29 @@ If(
         <p class="do">Every input signals its own state through <strong>BorderColor</strong>: resting grey normally, red once <code class="cc">gblShowErrors</code> is on and the field is empty (or invalid). The first paste, done together — Tree view → expand <code class="cc">galSystems</code> → click <code class="cc">txtAppName</code> → property dropdown → <strong>BorderColor</strong> → Ctrl+A → paste:</p>
         <p class="fxlabel">txtAppName · BorderColor</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>If(gblShowErrors &amp;&amp; IsBlank(ThisItem.AppName), Color.Red, RGBA(201, 204, 213, 1))</code></div>
-        <p class="do">Repeat for the other eleven plain fields — same formula, swapping only the <code class="cc">ThisItem.</code> field to match the control:</p>
-        <dl class="props">
-          <div><dt>txtVendor</dt><dd>swap to <code class="cc">ThisItem.Vendor</code></dd></div>
-          <div><dt>txtOwner</dt><dd>swap to <code class="cc">ThisItem.BizOwner</code></dd></div>
-          <div><dt>txtPurpose</dt><dd>swap to <code class="cc">ThisItem.Purpose</code></dd></div>
-          <div><dt>txtCustodian</dt><dd>swap to <code class="cc">ThisItem.Custodian</code></dd></div>
-          <div><dt>txtAdminAccts</dt><dd>swap to <code class="cc">ThisItem.AdminAccts</code></dd></div>
-          <div><dt>txtPermissions</dt><dd>swap to <code class="cc">ThisItem.Permissions</code></dd></div>
-          <div><dt>txtSupport</dt><dd>swap to <code class="cc">ThisItem.SupportContact</code></dd></div>
-          <div><dt>drpIAMRole</dt><dd>swap to <code class="cc">ThisItem.IAMRole</code></dd></div>
-          <div><dt>drpDivision</dt><dd>swap to <code class="cc">ThisItem.Division</code></dd></div>
-          <div><dt>drpStatus</dt><dd>swap to <code class="cc">ThisItem.Status</code></dd></div>
-          <div><dt>drpHandover</dt><dd>swap to <code class="cc">ThisItem.Handover</code></dd></div>
-        </dl>
+        <p class="do">The other eleven plain fields, same motion — each is a <strong>full paste, no editing</strong>. Select the control → property dropdown → <strong>BorderColor</strong> → Ctrl+A → paste:</p>
+        <p class="fxlabel">txtVendor · BorderColor</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>If(gblShowErrors &amp;&amp; IsBlank(ThisItem.Vendor), Color.Red, RGBA(201, 204, 213, 1))</code></div>
+        <p class="fxlabel">txtOwner · BorderColor</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>If(gblShowErrors &amp;&amp; IsBlank(ThisItem.BizOwner), Color.Red, RGBA(201, 204, 213, 1))</code></div>
+        <p class="fxlabel">txtPurpose · BorderColor</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>If(gblShowErrors &amp;&amp; IsBlank(ThisItem.Purpose), Color.Red, RGBA(201, 204, 213, 1))</code></div>
+        <p class="fxlabel">txtCustodian · BorderColor</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>If(gblShowErrors &amp;&amp; IsBlank(ThisItem.Custodian), Color.Red, RGBA(201, 204, 213, 1))</code></div>
+        <p class="fxlabel">txtAdminAccts · BorderColor</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>If(gblShowErrors &amp;&amp; IsBlank(ThisItem.AdminAccts), Color.Red, RGBA(201, 204, 213, 1))</code></div>
+        <p class="fxlabel">txtPermissions · BorderColor</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>If(gblShowErrors &amp;&amp; IsBlank(ThisItem.Permissions), Color.Red, RGBA(201, 204, 213, 1))</code></div>
+        <p class="fxlabel">txtSupport · BorderColor</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>If(gblShowErrors &amp;&amp; IsBlank(ThisItem.SupportContact), Color.Red, RGBA(201, 204, 213, 1))</code></div>
+        <p class="fxlabel">drpIAMRole · BorderColor</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>If(gblShowErrors &amp;&amp; IsBlank(ThisItem.IAMRole), Color.Red, RGBA(201, 204, 213, 1))</code></div>
+        <p class="fxlabel">drpDivision · BorderColor</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>If(gblShowErrors &amp;&amp; IsBlank(ThisItem.Division), Color.Red, RGBA(201, 204, 213, 1))</code></div>
+        <p class="fxlabel">drpStatus · BorderColor</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>If(gblShowErrors &amp;&amp; IsBlank(ThisItem.Status), Color.Red, RGBA(201, 204, 213, 1))</code></div>
+        <p class="fxlabel">drpHandover · BorderColor</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>If(gblShowErrors &amp;&amp; IsBlank(ThisItem.Handover), Color.Red, RGBA(201, 204, 213, 1))</code></div>
         <p class="do">The last two carry their format checks as well — full pastes, no editing:</p>
         <p class="fxlabel">txtAccessLink · BorderColor</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>If(gblShowErrors &amp;&amp; (IsBlank(ThisItem.AccessLink) || !IsMatch(ThisItem.AccessLink, "^(https?://)?([\w\-]+\.)+[\w\-]+(/\S*)?$")), Color.Red, RGBA(201, 204, 213, 1))</code></div>
@@ -324,7 +335,15 @@ If(
     <details class="step" id="b7">
       <summary><span class="dot"></span><span class="num">B7</span><span class="stitle">The per-row error message</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
       <div class="body">
-        <p class="do">Each row card gets one red line at its foot that <em>names</em> every offending field — far friendlier than 14 separate error labels, and far fewer controls in the template. If Part 1 already gave you <code class="cc">lblRowError</code>, click it in the Tree view (inside <code class="cc">galSystems</code>); otherwise insert a Text label into the gallery template now, rename it <code class="cc">lblRowError</code>, and set X <code class="cc">16</code> · Y <code class="cc">552</code> · Width <code class="cc">1294</code> · Height <code class="cc">40</code> · Color <code class="cc">Color.Red</code>.</p>
+        <p class="do">Each row card gets one red line at its foot that <em>names</em> every offending field — far friendlier than 14 separate error labels, and far fewer controls in the template. Part 1 didn't create this label, so insert it now — <strong>into the gallery template, not onto the screen</strong>:</p>
+        <ol class="steps2">
+          <li>Click any control inside the <strong>first</strong> row (e.g. <code class="cc">txtAppName</code>) so the gallery template is active.</li>
+          <li><strong>+ Insert</strong> (left rail) → type <code class="cc">Text label</code> in the search box → click it.</li>
+          <li>Look at the Tree view: the new label must appear <strong>nested under</strong> <code class="cc">galSystems</code>. If it sits at screen level instead, delete it, click inside the row again, and re-insert.</li>
+          <li>Double-click the label's name in the Tree view → paste <code class="cc">lblRowError</code> → Enter.</li>
+          <li>Properties pane (right side) → Position → X <code class="cc">16</code> · Y <code class="cc">540</code>, Size → Width <code class="cc">1294</code> · Height <code class="cc">40</code>.</li>
+          <li>Property dropdown → <strong>Color</strong> → Ctrl+A → paste: <code class="cc">Color.Red</code></li>
+        </ol>
         <p class="do">Property dropdown → <strong>Text</strong> → Ctrl+A → paste:</p>
         <p class="fxlabel">lblRowError · Text</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>If(!gblShowErrors, "",
@@ -373,7 +392,7 @@ With({bad: CountRows(Filter(colSystems, IsBlank(AppName) || IsBlank(Vendor) || I
 ))</code></div>
         <p class="fxlabel">lblFormError · Visible</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>gblShowErrors &amp;&amp; !IsBlank(Self.Text)</code></div>
-        <p class="do"><strong>b) Smoother typing.</strong> On each of the ten text inputs, set <strong>DelayOutput</strong> → <code class="cc">true</code>: <code class="cc">txtAppName</code> · <code class="cc">txtVendor</code> · <code class="cc">txtOwner</code> · <code class="cc">txtPurpose</code> · <code class="cc">txtCustodian</code> · <code class="cc">txtAdminAccts</code> · <code class="cc">txtPermissions</code> · <code class="cc">txtSupport</code> · <code class="cc">txtAccessLink</code> · <code class="cc">txtNumAccts</code>. Validation now re-evaluates a beat after you pause instead of on every keystroke.</p>
+        <p class="do"><strong>b) Smoother typing.</strong> On each of the ten text inputs: select it → property dropdown → <strong>DelayOutput</strong> → Ctrl+A → type <code class="cc">true</code>. The ten: <code class="cc">txtAppName</code> · <code class="cc">txtVendor</code> · <code class="cc">txtOwner</code> · <code class="cc">txtPurpose</code> · <code class="cc">txtCustodian</code> · <code class="cc">txtAdminAccts</code> · <code class="cc">txtPermissions</code> · <code class="cc">txtSupport</code> · <code class="cc">txtAccessLink</code> · <code class="cc">txtNumAccts</code>. Validation now re-evaluates a beat after you pause instead of on every keystroke.</p>
         <p class="do"><strong>c) Guard Delete Row during submission.</strong> Tree view → click <code class="cc">btnDeleteRow</code> → property dropdown → <strong>DisplayMode</strong> → Ctrl+A → paste:</p>
         <p class="fxlabel">btnDeleteRow · DisplayMode</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>If(gblSubmitting, DisplayMode.Disabled, DisplayMode.Edit)</code></div>

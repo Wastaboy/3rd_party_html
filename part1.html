@@ -164,6 +164,7 @@
     <div class="note why"><b>The architecture, in one paragraph</b>Every row of the form lives in a local collection called <code>colSystems</code> — not in the on-screen controls. Each input <em>immediately</em> writes its value back into the collection the moment it changes. That one habit makes the whole app safe: rows can scroll out of sight, rows can be deleted from the middle, and nothing is ever lost or shuffled, because the collection — not the controls — is the single source of truth. Step A10 will make you prove this to yourself.</div>
     <div class="note warn"><b>Two placeholders to substitute</b>Wherever you see <code>&lt;YOUR-SITE-URL&gt;</code> (your SharePoint site) or <code>&lt;IAM-DL-EMAIL&gt;</code> (the IAM distribution list address), substitute your own values. Everything else is paste-as-is.</div>
     <div class="note why"><b>Tap any chip to copy</b>Dark boxes have a <strong>Copy</strong> button. Every inline chip like <code class="cc">galSystems</code> is tap-to-copy — the ⧉ mark is the reminder. Paste, never retype.</div>
+    <div class="note tip"><b>How every insert works</b>Click <strong>+ Insert</strong> on the left rail → type the control name into the <strong>search box</strong> → click it. The only search terms this guide uses: <code class="cc">Text label</code> · <code class="cc">Text input</code> · <code class="cc">Drop down</code> · <code class="cc">Button</code> · <code class="cc">Rectangle</code> · <code class="cc">Blank vertical gallery</code>. After inserting, rename the control: <strong>double-click its name in the Tree view</strong> → paste the new name → Enter.</div>
   </section>
 
   <section class="block" id="phase-list">
@@ -172,7 +173,7 @@
     <details class="step" id="a1" open>
       <summary><span class="dot"></span><span class="num">A1</span><span class="stitle">Verify the 3rd party inventory list</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
       <div class="body">
-        <p class="do">The list already exists — this step makes sure it looks exactly the way the formulas in Part 3 expect. Open <code>&lt;YOUR-SITE-URL&gt;</code> in the browser → open the <code class="cc">3rd party inventory</code> list → gear icon → <strong>List settings</strong>. Compare the Columns section against this table:</p>
+        <p class="do">The list already exists — this step makes sure it looks exactly the way the formulas in Part 3 expect. Open <code>&lt;YOUR-SITE-URL&gt;</code> in the browser → <strong>gear icon (top right)</strong> → <strong>Site contents</strong> → click <code class="cc">3rd party inventory</code> → gear icon again → <strong>List settings</strong>. The <strong>Columns</strong> section lists every column with its <strong>Type</strong> right beside the name — that's where every answer below comes from. Compare it against this table:</p>
         <table class="cols">
           <tr><th>#</th><th>Display name</th><th>Expected type</th><th>Form fills it?</th></tr>
           <tr><td>1</td><td><code class="cc">Application Name</code></td><td>Text (likely the renamed Title)</td><td>Yes</td></tr>
@@ -212,10 +213,10 @@
         </div>
         <p class="do"><strong>Two checks and one addition while you're here:</strong></p>
         <ol class="steps2">
-          <li><strong>Title check.</strong> If <code class="cc">Application Name</code> is the renamed built-in Title column (it usually is), that's fine. What matters: there must be <em>no separate Title column still marked "Require that this column contains information"</em> — that would make every submission fail in Part 3.</li>
-          <li><strong>Add the audit columns</strong> (skip if they already exist). List settings → <strong>Create column</strong> → name <code class="cc">Responder Name</code> → type <strong>Single line of text</strong> → OK. Repeat for <code class="cc">Responder Email</code>.</li>
+          <li><strong>Title check.</strong> If <code class="cc">Application Name</code> is the renamed built-in Title column (it usually is), that's fine. What matters: there must be <em>no separate Title column still marked "Require that this column contains information"</em> — that would make every submission fail in Part 3. To check: List settings → <strong>Columns</strong> → click <strong>Title</strong> → "Require that this column contains information" must be <strong>No</strong>.</li>
+          <li><strong>Add the audit columns</strong> (skip if they already exist). List settings → <strong>Create column</strong> → name <code class="cc">Responder Name</code> → type <strong>Single line of text</strong> → OK (or, from the list view itself: <strong>+ Add column</strong> → <strong>Single line of text</strong>). Repeat for <code class="cc">Responder Email</code>.</li>
         </ol>
-        <div class="note warn"><b>The quirky names are load-bearing</b>Four column names contain deliberate-looking accidents — <code>Vendor/ Provider Name</code> (space after the slash), <code>Business owner</code> (lowercase o), <code>Permissions / Access levels</code> (lowercase l), and <code>Division </code> (trailing space). <strong>Do not rename them</strong> — live data and the formulas in this guide both use them as-is. In Power Apps you'll always accept IntelliSense autocomplete rather than hand-typing these.</div>
+        <div class="note warn"><b>The quirky names are load-bearing</b>Four column names contain deliberate-looking accidents — <code>Vendor/ Provider Name</code> (space after the slash), <code>Business owner</code> (lowercase o), <code>Permissions / Access levels</code> (lowercase l), and <code>Division </code> (trailing space). <strong>Do not rename them</strong> — live data and the formulas in this guide both use them as-is. In Power Apps you'll always accept IntelliSense autocomplete rather than hand-typing these. And when this guide writes <code>Division␠</code>, the ␠ just marks the invisible trailing space — on screen the column looks like plain "Division".</div>
         <div class="note check"><b>Check before moving on</b>All 21 columns present with matching names · your worksheet has six recorded types · no separate required Title column · <code>Responder Name</code> and <code>Responder Email</code> exist as Single line of text columns.</div>
         <button class="done" type="button">Mark step done</button>
       </div>
@@ -229,13 +230,13 @@
       <summary><span class="dot"></span><span class="num">A2</span><span class="stitle">Create the app and set three settings</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
       <div class="body">
         <ol class="steps2">
-          <li>Go to <code class="cc">make.powerapps.com</code> (check the correct environment, top right) → <strong>Create</strong> → <strong>Start with a blank canvas</strong> → <strong>Tablet size</strong>. Studio opens with an empty <em>Screen1</em>.</li>
+          <li>Go to <code class="cc">make.powerapps.com</code> (check the correct environment, top right) → <strong>Create</strong> → <strong>Start with a blank canvas</strong> → <strong>Tablet size</strong>. If a dialog asks for the app's name right away, paste <code class="cc">Third-Party Application Declaration</code> there. Studio opens with an empty <em>Screen1</em>.</li>
           <li><strong>Settings</strong> (gear icon, or File → Settings) → <strong>Display</strong>: confirm size is <code class="cc">1366</code> × <code class="cc">768</code>.</li>
-          <li>Settings → <strong>General</strong> (or <em>Updates → New</em> on newer Studio versions): turn <strong>OFF</strong> <em>Modern controls and themes</em>. This guide names classic properties (<code>HintText</code>, <code>Default</code>, <code>BorderColor</code>) — modern controls would rename half of them.</li>
-          <li>Settings → <strong>Updates</strong> → search for <em>Formula-level error management</em> → turn it <strong>ON</strong>. Part 3's submit formula uses <code>IfError</code>, which needs this switch.</li>
+          <li>Settings has a <strong>search box</strong> — type <code class="cc">modern</code> to find <em>Modern controls and themes</em> → turn it <strong>OFF</strong>. This guide names classic properties (<code>HintText</code>, <code>Default</code>, <code>BorderColor</code>) — modern controls would rename half of them.</li>
+          <li>Same search box → type <code class="cc">error</code> to find <em>Formula-level error management</em> → turn it <strong>ON</strong>. Part 3's submit formula uses <code>IfError</code>, which needs this switch.</li>
           <li>Tree view → double-click <em>Screen1</em> → rename to <code class="cc">scrMain</code>.</li>
         </ol>
-        <div class="note tip"><b>Save early</b>File → Save → name the app — <code class="cc">Third-Party Application Declaration</code> works. Autosave takes over from here.</div>
+        <div class="note tip"><b>Save early</b>If you weren't asked for a name at creation: File → Save → paste <code class="cc">Third-Party Application Declaration</code>. Autosave takes over from here.</div>
         <div class="note check"><b>Check before moving on</b>An empty tablet app named and saved · Tree view shows a single screen called <code>scrMain</code> · modern controls off · formula-level error management on.</div>
         <button class="done" type="button">Mark step done</button>
       </div>
@@ -284,12 +285,12 @@ ClearCollect(colSystems, {RowID: GUID(), SeqNo: 1, AppName: "", Vendor: "", BizO
     <details class="step" id="a5">
       <summary><span class="dot"></span><span class="num">A5</span><span class="stitle">The header band</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
       <div class="body">
-        <p class="do">Four controls on <code class="cc">scrMain</code>. Insert each from the <strong>Insert</strong> menu, rename it in the Tree view (double-click the name), then set position/size in the Properties pane on the right.</p>
+        <p class="do">Four controls on <code class="cc">scrMain</code>. For each: <strong>+ Insert</strong> → search box → the control's search term → click it → rename in the Tree view (double-click the name → paste → Enter) → set X/Y/Width/Height in the <strong>Properties pane</strong> on the right. Two standing motions, used here and in every later step: every quoted <strong>Text</strong> value goes in via property dropdown (top-left, next to the <code class="cc">fx</code> bar) → <strong>Text</strong> → Ctrl+A → paste (quotes included); every colour goes in via property dropdown → <strong>Color</strong> (or <strong>Fill</strong>) → Ctrl+A → paste.</p>
         <ol class="steps2">
-          <li><strong>Rectangle</strong> → rename <code class="cc">recHeader</code> → X <code class="cc">0</code> · Y <code class="cc">0</code> · Width <code class="cc">1366</code> · Height <code class="cc">80</code>. Property dropdown → <strong>Fill</strong> → Ctrl+A → paste: <code class="cc">gblColorBrand</code></li>
-          <li><strong>Text label</strong> → rename <code class="cc">lblAppTitle</code> → X <code class="cc">24</code> · Y <code class="cc">10</code> · Width <code class="cc">800</code> · Height <code class="cc">36</code> → Text: <code class="cc">"Third-Party Application Declaration"</code> → right pane: Font size <code class="cc">22</code>, <strong>Bold</strong>, font colour white.</li>
-          <li><strong>Text label</strong> → rename <code class="cc">lblAppSubtitle</code> → X <code class="cc">24</code> · Y <code class="cc">46</code> · Width <code class="cc">800</code> · Height <code class="cc">26</code> → Text: <code class="cc">"Declare the third-party systems your division uses — all fields are required"</code> → Font size <code class="cc">14</code>, font colour white.</li>
-          <li><strong>Text label</strong> → rename <code class="cc">lblUserBadge</code> → X <code class="cc">1020</code> · Y <code class="cc">24</code> · Width <code class="cc">322</code> · Height <code class="cc">32</code> → right pane: Font size <code class="cc">14</code>, font colour white, text alignment <strong>Right</strong>. Property dropdown → <strong>Text</strong> → Ctrl+A → paste:</li>
+          <li>+ Insert → search <code class="cc">Rectangle</code> → rename <code class="cc">recHeader</code> → X <code class="cc">0</code> · Y <code class="cc">0</code> · Width <code class="cc">1366</code> · Height <code class="cc">80</code>. Property dropdown → <strong>Fill</strong> → Ctrl+A → paste: <code class="cc">gblColorBrand</code></li>
+          <li>+ Insert → search <code class="cc">Text label</code> → rename <code class="cc">lblAppTitle</code> → X <code class="cc">24</code> · Y <code class="cc">10</code> · Width <code class="cc">800</code> · Height <code class="cc">36</code> → Text: <code class="cc">"Third-Party Application Declaration"</code> → right pane: Font size <code class="cc">22</code>, <strong>Bold</strong> → Color: <code class="cc">Color.White</code>.</li>
+          <li>+ Insert → search <code class="cc">Text label</code> → rename <code class="cc">lblAppSubtitle</code> → X <code class="cc">24</code> · Y <code class="cc">46</code> · Width <code class="cc">800</code> · Height <code class="cc">26</code> → Text: <code class="cc">"Declare the third-party systems your division uses — all fields are required"</code> → right pane: Font size <code class="cc">14</code> → Color: <code class="cc">Color.White</code>.</li>
+          <li>+ Insert → search <code class="cc">Text label</code> → rename <code class="cc">lblUserBadge</code> → X <code class="cc">1020</code> · Y <code class="cc">24</code> · Width <code class="cc">322</code> · Height <code class="cc">32</code> → right pane: Font size <code class="cc">14</code>, text alignment <strong>Right</strong> → Color: <code class="cc">Color.White</code>. Then property dropdown → <strong>Text</strong> → Ctrl+A → paste:</li>
         </ol>
         <p class="fxlabel">lblUserBadge · Text</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>User().FullName</code></div>
@@ -307,17 +308,17 @@ ClearCollect(colSystems, {RowID: GUID(), SeqNo: 1, AppName: "", Vendor: "", BizO
       <summary><span class="dot"></span><span class="num">A6</span><span class="stitle">The gallery — one card per system</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
       <div class="body">
         <ol class="steps2">
-          <li>Insert → Gallery → <strong>Blank vertical</strong>. Rename it <code class="cc">galSystems</code>.</li>
-          <li>The Items panel may pop up asking for a data source — choose <code class="cc">colSystems</code> (or set the property dropdown → <strong>Items</strong> → paste <code class="cc">colSystems</code>).</li>
+          <li><strong>+ Insert</strong> → search <code class="cc">Blank vertical gallery</code> → click it. Rename it <code class="cc">galSystems</code>.</li>
+          <li>The Items panel may pop up asking for a data source — choose <code class="cc">colSystems</code> (or set the property dropdown → <strong>Items</strong> → Ctrl+A → paste <code class="cc">colSystems</code>).</li>
           <li>Properties pane: X <code class="cc">0</code> · Y <code class="cc">96</code> · Width <code class="cc">1366</code> · Height <code class="cc">580</code>.</li>
           <li>Property dropdown → <strong>TemplateSize</strong> → Ctrl+A → type: <code class="cc">600</code></li>
-          <li>Now click the <strong>pencil icon</strong> in the gallery's top-left corner — this puts you <em>inside the template</em>, so everything you insert next lands in the row, not on the screen. Insert → <strong>Rectangle</strong> → rename <code class="cc">recRowCard</code> → X <code class="cc">8</code> · Y <code class="cc">8</code> · Width <code class="cc">1318</code> · Height <code class="cc">584</code> → right pane: Fill white, border 1px light grey.</li>
-          <li>Still inside the template: Insert → <strong>Text label</strong> → rename <code class="cc">lblRowNum</code> → X <code class="cc">16</code> · Y <code class="cc">14</code> · Width <code class="cc">200</code> → <strong>Bold</strong>. Property dropdown → <strong>Text</strong> → Ctrl+A → paste:</li>
+          <li>Now click the <strong>pencil icon</strong> in the gallery's top-left corner — this puts you <em>inside the template</em>, so everything you insert next lands in the row, not on the screen. + Insert → search <code class="cc">Rectangle</code> → rename <code class="cc">recRowCard</code> → X <code class="cc">8</code> · Y <code class="cc">8</code> · Width <code class="cc">1318</code> · Height <code class="cc">584</code>. Then three property pastes: <strong>Fill</strong> → Ctrl+A → <code class="cc">RGBA(255, 255, 255, 1)</code> · <strong>BorderColor</strong> → Ctrl+A → <code class="cc">RGBA(201, 204, 213, 1)</code> · <strong>BorderThickness</strong> → Ctrl+A → <code class="cc">1</code>.</li>
+          <li>Still inside the template: + Insert → search <code class="cc">Text label</code> → rename <code class="cc">lblRowNum</code> → X <code class="cc">16</code> · Y <code class="cc">14</code> · Width <code class="cc">200</code> · Height <code class="cc">28</code> → <strong>Bold</strong>. Property dropdown → <strong>Text</strong> → Ctrl+A → paste:</li>
         </ol>
         <p class="fxlabel">lblRowNum · Text</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>"System " &amp; ThisItem.SeqNo</code></div>
         <ol class="steps2" start="7">
-          <li>Still inside the template: Insert → <strong>Button</strong> → rename <code class="cc">btnDeleteRow</code> → X <code class="cc">1180</code> · Y <code class="cc">14</code> · Width <code class="cc">130</code> · Height <code class="cc">32</code> → Text: <code class="cc">"Delete Row"</code>. Property dropdown → <strong>OnSelect</strong> → Ctrl+A → paste:</li>
+          <li>Still inside the template: + Insert → search <code class="cc">Button</code> → rename <code class="cc">btnDeleteRow</code> → X <code class="cc">1180</code> · Y <code class="cc">14</code> · Width <code class="cc">130</code> · Height <code class="cc">32</code> → Text: <code class="cc">"Delete Row"</code> (property dropdown → <strong>Text</strong> → Ctrl+A → paste). Property dropdown → <strong>OnSelect</strong> → Ctrl+A → paste:</li>
         </ol>
         <p class="fxlabel">btnDeleteRow · OnSelect</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>Remove(colSystems, ThisItem)</code></div>
@@ -330,7 +331,7 @@ ClearCollect(colSystems, {RowID: GUID(), SeqNo: 1, AppName: "", Vendor: "", BizO
     <details class="step" id="a7">
       <summary><span class="dot"></span><span class="num">A7</span><span class="stitle">Left column — seven fields</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
       <div class="body">
-        <p class="do">Seven label + input pairs, all <strong>inside the gallery template</strong> (pencil icon first — check the breadcrumb above the canvas says you're in <code class="cc">galSystems</code>). The drill for every field: Insert → <strong>Text label</strong>, rename, position, set Text · Insert → <strong>Text input</strong>, rename, position · property dropdown → <strong>Default</strong> → Ctrl+A → paste · property dropdown → <strong>OnChange</strong> → Ctrl+A → paste. All labels and inputs: X <code class="cc">16</code> · Width <code class="cc">630</code>. Labels Height <code class="cc">20</code>, inputs Height <code class="cc">40</code>.</p>
+        <p class="do">Seven label + input pairs, all <strong>inside the gallery template</strong> (pencil icon first — check the breadcrumb above the canvas says you're in <code class="cc">galSystems</code>). The drill for every field: <strong>+ Insert</strong> → search <code class="cc">Text label</code>, rename, position, set Text (property dropdown → <strong>Text</strong> → Ctrl+A → paste, quotes included) · + Insert → search <code class="cc">Text input</code>, rename, position · property dropdown → <strong>Default</strong> → Ctrl+A → paste · property dropdown → <strong>OnChange</strong> → Ctrl+A → paste. All labels and inputs: X <code class="cc">16</code> · Width <code class="cc">630</code>. Labels Height <code class="cc">20</code>, inputs Height <code class="cc">40</code>.</p>
 
         <p class="do"><strong>1 · Application Name.</strong> Label <code class="cc">lblAppName</code> at Y <code class="cc">48</code>, Text <code class="cc">"Application Name"</code>. Input <code class="cc">txtAppName</code> at Y <code class="cc">72</code>:</p>
         <p class="fxlabel">txtAppName · Default</p>
@@ -350,7 +351,7 @@ ClearCollect(colSystems, {RowID: GUID(), SeqNo: 1, AppName: "", Vendor: "", BizO
         <p class="fxlabel">txtOwner · OnChange</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>Patch(colSystems, ThisItem, {BizOwner: Self.Text})</code></div>
 
-        <p class="do"><strong>4 · Application Purpose</strong> — this one is multiline. Label <code class="cc">lblPurpose</code> at Y <code class="cc">264</code>, Text <code class="cc">"Application Purpose"</code>. Input <code class="cc">txtPurpose</code> at Y <code class="cc">288</code>, and additionally set property dropdown → <strong>Mode</strong> → <code class="cc">TextMode.MultiLine</code>:</p>
+        <p class="do"><strong>4 · Application Purpose</strong> — this one is multiline. Label <code class="cc">lblPurpose</code> at Y <code class="cc">264</code>, Text <code class="cc">"Application Purpose"</code>. Input <code class="cc">txtPurpose</code> at Y <code class="cc">288</code>, and additionally property dropdown → <strong>Mode</strong> → Ctrl+A → paste <code class="cc">TextMode.MultiLine</code>:</p>
         <p class="fxlabel">txtPurpose · Default</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>ThisItem.Purpose</code></div>
         <p class="fxlabel">txtPurpose · OnChange</p>
@@ -368,14 +369,14 @@ ClearCollect(colSystems, {RowID: GUID(), SeqNo: 1, AppName: "", Vendor: "", BizO
         <p class="fxlabel">txtAdminAccts · OnChange</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>Patch(colSystems, ThisItem, {AdminAccts: Self.Text})</code></div>
 
-        <p class="do"><strong>7 · Permissions / Access Levels</strong> — multiline again. Label <code class="cc">lblPermissions</code> at Y <code class="cc">480</code>, Text <code class="cc">"Permissions / Access Levels"</code>. Input <code class="cc">txtPermissions</code> at Y <code class="cc">504</code>, Mode → <code class="cc">TextMode.MultiLine</code>:</p>
+        <p class="do"><strong>7 · Permissions / Access Levels</strong> — multiline again. Label <code class="cc">lblPermissions</code> at Y <code class="cc">480</code>, Text <code class="cc">"Permissions / Access Levels"</code>. Input <code class="cc">txtPermissions</code> at Y <code class="cc">504</code>, Mode → Ctrl+A → paste <code class="cc">TextMode.MultiLine</code>:</p>
         <p class="fxlabel">txtPermissions · Default</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>ThisItem.Permissions</code></div>
         <p class="fxlabel">txtPermissions · OnChange</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>Patch(colSystems, ThisItem, {Permissions: Self.Text})</code></div>
 
         <div class="note why"><b>Why every input patches itself</b><code>Default</code> reads the row's stored value; <code>OnChange</code> writes edits straight back into <code>colSystems</code>. Because both use <code>ThisItem</code>/<code>Self</code>, the formulas are identical in every row and every field except the field name — and the collection is always up to date, no matter what the gallery does with its on-screen controls.</div>
-        <div class="note check"><b>Check before moving on</b>Seven stacked fields down the left half of the card. Type into any of them, then open Variables → <code>colSystems</code> — the value is already in the collection.</div>
+        <div class="note check"><b>Check before moving on</b>Seven stacked fields down the left half of the card. Type into any of them, then <strong>click somewhere else</strong> — OnChange fires when you <em>leave</em> the field — and open Variables → <code>colSystems</code>: the value is in the collection.</div>
         <button class="done" type="button">Mark step done</button>
       </div>
     </details>
@@ -383,7 +384,7 @@ ClearCollect(colSystems, {RowID: GUID(), SeqNo: 1, AppName: "", Vendor: "", BizO
     <details class="step" id="a8">
       <summary><span class="dot"></span><span class="num">A8</span><span class="stitle">Right column — three inputs and four dropdowns</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
       <div class="body">
-        <p class="do">Same drill, right half of the card: everything at X <code class="cc">676</code> · Width <code class="cc">630</code>, labels Height <code class="cc">20</code>, inputs Height <code class="cc">40</code>. Four of these are <strong>Drop down</strong> controls (Insert → Input → Drop down) — each needs <strong>Items</strong>, <strong>AllowEmptySelection</strong>, <strong>Default</strong> and <strong>OnChange</strong>.</p>
+        <p class="do">Same drill, right half of the card: everything at X <code class="cc">676</code> · Width <code class="cc">630</code>, labels Height <code class="cc">20</code>, inputs Height <code class="cc">40</code>. Text values go in the same way as A7 (property dropdown → <strong>Text</strong> → Ctrl+A → paste, quotes included). Four of these are <strong>Drop down</strong> controls (+ Insert → search <code class="cc">Drop down</code>) — set each one's properties in this order: <strong>Items</strong> → <strong>AllowEmptySelection</strong> → <strong>Default</strong> → <strong>OnChange</strong>.</p>
 
         <p class="do"><strong>1 · Support / Vendor Contact.</strong> Label <code class="cc">lblSupport</code> at Y <code class="cc">48</code>, Text <code class="cc">"Support / Vendor Contact"</code>. Text input <code class="cc">txtSupport</code> at Y <code class="cc">72</code>:</p>
         <p class="fxlabel">txtSupport · Default</p>
@@ -391,7 +392,7 @@ ClearCollect(colSystems, {RowID: GUID(), SeqNo: 1, AppName: "", Vendor: "", BizO
         <p class="fxlabel">txtSupport · OnChange</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>Patch(colSystems, ThisItem, {SupportContact: Self.Text})</code></div>
 
-        <p class="do"><strong>2 · IAM Role</strong> — first dropdown. Label <code class="cc">lblIAMRole</code> at Y <code class="cc">120</code>, Text <code class="cc">"IAM Role"</code>. <strong>Drop down</strong> <code class="cc">drpIAMRole</code> at Y <code class="cc">144</code>. Property dropdown → <strong>AllowEmptySelection</strong> → Ctrl+A → type <code class="cc">true</code>, then:</p>
+        <p class="do"><strong>2 · IAM Role</strong> — first dropdown. Label <code class="cc">lblIAMRole</code> at Y <code class="cc">120</code>, Text <code class="cc">"IAM Role"</code>. <strong>Drop down</strong> <code class="cc">drpIAMRole</code> at Y <code class="cc">144</code>. Set <strong>Items</strong> first (box below), then property dropdown → <strong>AllowEmptySelection</strong> → Ctrl+A → type <code class="cc">true</code>, then Default and OnChange:</p>
         <p class="fxlabel">drpIAMRole · Items</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>colIAMRoles</code></div>
         <p class="fxlabel">drpIAMRole · Default</p>
@@ -429,7 +430,7 @@ ClearCollect(colSystems, {RowID: GUID(), SeqNo: 1, AppName: "", Vendor: "", BizO
         <p class="fxlabel">drpHandover · OnChange</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>Patch(colSystems, ThisItem, {Handover: Self.Selected.Value})</code></div>
 
-        <p class="do"><strong>7 · Number of Accounts.</strong> Label <code class="cc">lblNumAccts</code> at Y <code class="cc">480</code>, Text <code class="cc">"Number of Accounts"</code>. Text input <code class="cc">txtNumAccts</code> at Y <code class="cc">504</code>, and additionally property dropdown → <strong>Format</strong> → <code class="cc">TextFormat.Number</code>:</p>
+        <p class="do"><strong>7 · Number of Accounts.</strong> Label <code class="cc">lblNumAccts</code> at Y <code class="cc">480</code>, Text <code class="cc">"Number of Accounts"</code>. Text input <code class="cc">txtNumAccts</code> at Y <code class="cc">504</code>, and additionally property dropdown → <strong>Format</strong> → Ctrl+A → paste <code class="cc">TextFormat.Number</code>:</p>
         <p class="fxlabel">txtNumAccts · Default</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>ThisItem.NumAccts</code></div>
         <p class="fxlabel">txtNumAccts · OnChange</p>
@@ -446,14 +447,14 @@ ClearCollect(colSystems, {RowID: GUID(), SeqNo: 1, AppName: "", Vendor: "", BizO
       <div class="body">
         <p class="do">Back <strong>out</strong> of the gallery template first — click empty canvas or press Esc, and check the breadcrumb: the next three controls belong to <code class="cc">scrMain</code>, not the template.</p>
         <ol class="steps2">
-          <li><strong>Rectangle</strong> → rename <code class="cc">recFooter</code> → X <code class="cc">0</code> · Y <code class="cc">692</code> · Width <code class="cc">1366</code> · Height <code class="cc">76</code> → Fill: <code class="cc">gblColorInk</code> (property dropdown → Fill → paste).</li>
-          <li><strong>Button</strong> → rename <code class="cc">btnAddSystem</code> → X <code class="cc">24</code> · Y <code class="cc">710</code> · Width <code class="cc">200</code> · Height <code class="cc">40</code> → Text: <code class="cc">"+ Add System"</code>. Property dropdown → <strong>OnSelect</strong> → Ctrl+A → paste:</li>
+          <li>+ Insert → search <code class="cc">Rectangle</code> → rename <code class="cc">recFooter</code> → X <code class="cc">0</code> · Y <code class="cc">692</code> · Width <code class="cc">1366</code> · Height <code class="cc">76</code> → Fill: <code class="cc">gblColorInk</code> (property dropdown → <strong>Fill</strong> → Ctrl+A → paste).</li>
+          <li>+ Insert → search <code class="cc">Button</code> → rename <code class="cc">btnAddSystem</code> → X <code class="cc">24</code> · Y <code class="cc">710</code> · Width <code class="cc">200</code> · Height <code class="cc">40</code> → Text: <code class="cc">"+ Add System"</code> (property dropdown → <strong>Text</strong> → Ctrl+A → paste). Property dropdown → <strong>OnSelect</strong> → Ctrl+A → paste:</li>
         </ol>
         <p class="fxlabel">btnAddSystem · OnSelect</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>Collect(colSystems, {RowID: GUID(), SeqNo: gblNextSeq, AppName: "", Vendor: "", BizOwner: "", Purpose: "", Custodian: "", AdminAccts: "", Permissions: "", SupportContact: "", IAMRole: "", AccessLink: "", Division: "", Status: "", Handover: "", NumAccts: ""});
 Set(gblNextSeq, gblNextSeq + 1)</code></div>
         <ol class="steps2" start="3">
-          <li><strong>Text label</strong> → rename <code class="cc">lblSystemCount</code> → X <code class="cc">240</code> · Y <code class="cc">716</code> · Width <code class="cc">420</code> · Height <code class="cc">28</code> → font colour white. Property dropdown → <strong>Text</strong> → Ctrl+A → paste:</li>
+          <li>+ Insert → search <code class="cc">Text label</code> → rename <code class="cc">lblSystemCount</code> → X <code class="cc">240</code> · Y <code class="cc">716</code> · Width <code class="cc">420</code> · Height <code class="cc">28</code> → Color: <code class="cc">Color.White</code> (property dropdown → <strong>Color</strong> → Ctrl+A → paste). Then property dropdown → <strong>Text</strong> → Ctrl+A → paste:</li>
         </ol>
         <p class="fxlabel">lblSystemCount · Text</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>CountRows(colSystems) &amp; " system(s) in this declaration"</code></div>
