@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F3B6E">
+<title>Third-Party Declarations — Part 1: Foundations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1F3B6E; --navy-deep:#142a52; --ink:#0f1f3d;
+    --amber:#E08A1E; --amber-soft:#fbe8cd;
+    --paper:#F4F5F8; --card:#fff; --line:#e3e6ee; --line-soft:#eef1f7;
+    --navy-tint:#eef0f6; --faint:#97a1b4;
+    --text:#1b2436; --muted:#5b6678;
+    --code-bg:#0f1f3d; --code-text:#e9edf7;
+    --ok:#1f8a52; --ok-soft:#e3f3ea;
+    --green:#228b57; --red:#c83737; --gray:#788291;
+    --radius:14px; --tap:46px; --sh-sm:0 1px 2px rgba(16,31,61,.04);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--text);font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:24px;line-height:1.62;-webkit-font-smoothing:antialiased;padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+  .wrap{max-width:760px;margin:0 auto;padding:0 16px;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+
+  header.mast{background:radial-gradient(120% 140% at 100% 0%, rgba(224,138,30,.22), transparent 55%),linear-gradient(160deg,var(--navy) 0%,var(--navy-deep) 100%);color:#fff;padding:calc(28px + env(safe-area-inset-top)) 0 26px;border-bottom:3px solid var(--amber)}
+  .mast-inner{display:flex;gap:18px;align-items:center}
+  .mast-copy{flex:1;min-width:0}
+  .brandmark{flex:none;width:60px;height:60px;border-radius:15px;background:linear-gradient(160deg,#274982,#1a345f);border:1px solid rgba(255,255,255,.18);box-shadow:0 8px 22px -10px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.12);display:grid;place-items:center}
+  .kicker{font-family:"IBM Plex Mono",monospace;font-size:16px;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);font-weight:500;margin:0 0 10px}
+  .mast h1{font-family:"IBM Plex Serif",Georgia,serif;font-weight:600;font-size:42px;line-height:1.12;margin:0 0 8px;letter-spacing:-.01em}
+  .mast p.sub{margin:0;color:#c7d2e8;font-size:21px;max-width:48ch}
+  .mast .meta{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px}
+  .mast .meta span{font-family:"IBM Plex Mono",monospace;font-size:16px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);padding:5px 9px;border-radius:999px;color:#dde6f5}
+  .mast .meta span b{color:#fff;font-weight:600}
+  @media(max-width:480px){ .brandmark{width:50px;height:50px} .mast h1{font-size:34px} }
+
+  .sticky{position:sticky;top:0;z-index:40;background:rgba(244,245,248,.86);backdrop-filter:saturate(180%) blur(12px);-webkit-backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+  .progress{height:5px;background:var(--line);overflow:hidden}
+  .progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--navy),var(--amber));transition:width .35s ease}
+  .progtext{font-family:"IBM Plex Mono",monospace;font-size:15px;color:var(--muted);padding:6px 0 8px;display:flex;justify-content:space-between;align-items:center}
+  .progtext button{background:none;border:none;color:var(--navy);font-family:inherit;font-size:15px;cursor:pointer;text-decoration:underline;padding:4px}
+
+  section.block{margin:26px 0}
+  section.block > h2.sec{font-family:"IBM Plex Serif",serif;font-size:29px;font-weight:600;color:var(--navy);margin:0 0 4px;letter-spacing:-.01em;scroll-margin-top:120px}
+  section.block > p.lead{margin:0 0 14px;color:var(--muted);font-size:21px}
+
+  .tldr{background:#fffdf8;border:1px dashed #ecd6ad;border-radius:12px;padding:13px 15px;margin:0 0 15px;font-size:20px}
+  .tldr b{display:block;font-family:"IBM Plex Mono",monospace;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:#a4651a;margin-bottom:4px}
+
+  details.step{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin:12px 0;overflow:hidden;scroll-margin-top:118px;box-shadow:var(--sh-sm)}
+  details.step[open]{box-shadow:0 6px 24px -12px rgba(16,31,61,.28);border-color:#d4dae8}
+  summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:15px 16px;min-height:var(--tap);user-select:none;-webkit-tap-highlight-color:transparent}
+  summary::-webkit-details-marker{display:none}
+  summary .num{flex:none;min-width:30px;height:30px;padding:0 5px;border-radius:9px;background:var(--navy);color:#fff;display:grid;place-items:center;font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:18px}
+  details.isdone summary .num{background:var(--ok)}
+  summary .stitle{flex:1;font-weight:600;font-size:22px;line-height:1.3}
+  summary .chev{flex:none;color:var(--muted);transition:transform .2s ease}
+  details[open] summary .chev{transform:rotate(90deg)}
+  summary .dot{flex:none;width:9px;height:9px;border-radius:50%;border:2px solid var(--line)}
+  details.isdone summary .dot{background:var(--ok);border-color:var(--ok)}
+  .body{padding:2px 16px 18px;border-top:1px solid var(--line-soft)}
+  .body > *:first-child{margin-top:14px}
+  .body p{margin:0 0 12px}
+  p.do{margin:0 0 12px}
+  .body ul,.body ol{margin:0 0 12px;padding-left:22px}.body li{margin:0 0 8px}
+  ol.steps2{counter-reset:s2;list-style:none;padding-left:0}
+  ol.steps2 > li{position:relative;padding:2px 0 10px 40px;margin:0}
+  ol.steps2 > li::before{counter-increment:s2;content:counter(s2);position:absolute;left:0;top:0;width:28px;height:28px;border-radius:8px;background:var(--navy-tint);color:var(--navy);font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:16px;display:grid;place-items:center;border:1px solid #dbe3f5}
+
+  dl.props{margin:0 0 13px;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+  dl.props > div{display:grid;grid-template-columns:210px 1fr;border-top:1px solid var(--line-soft)}
+  dl.props > div:first-child{border-top:none}
+  dl.props dt{background:#f7f9fc;padding:9px 12px;font-family:"IBM Plex Mono",monospace;font-size:18px;color:var(--navy);font-weight:500;border-right:1px solid var(--line-soft)}
+  dl.props dd{margin:0;padding:9px 12px;font-size:20px}
+  dl.props dd code{font-family:"IBM Plex Mono",monospace;font-size:18px;background:#eef1f7;padding:1px 5px;border-radius:5px}
+  @media(max-width:430px){dl.props > div{grid-template-columns:130px 1fr}dl.props dt{font-size:15px;padding:8px 9px}dl.props dd{font-size:18px;padding:8px 10px}}
+
+  .fxlabel{font-family:"IBM Plex Mono",monospace;font-size:16px;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;margin:0 0 5px;font-weight:500}
+  .fx{position:relative;margin:0 0 13px}
+  .fx code{display:block;background:var(--code-bg);color:var(--code-text);font-family:"IBM Plex Mono",monospace;font-size:18px;line-height:1.55;padding:14px 84px 14px 16px;border-radius:11px;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;border:1px solid #1c3360}
+  .fx .copy{position:absolute;top:8px;right:8px;height:34px;min-width:34px;padding:0 11px;border:none;border-radius:8px;background:rgba(224,138,30,.95);color:#1b1206;font-family:"IBM Plex Mono",monospace;font-size:17px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .fx .copy:active{transform:scale(.96)}
+  .fx .copy.copied{background:var(--ok);color:#fff}
+  .fxgroup{border:1px solid var(--line);border-radius:12px;padding:12px 13px 2px;margin:0 0 14px;background:#fcfdff}
+  .fxgroup > .gh{font-family:"IBM Plex Mono",monospace;font-size:17px;font-weight:600;color:var(--navy);margin:0 0 8px;display:flex;align-items:center;gap:8px}
+  .fxgroup > .gh::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--amber)}
+
+  .pane{background:#f4f6fb;border:1px solid #dbe2f1;border-left:4px solid var(--navy);border-radius:11px;padding:12px 14px;margin:0 0 13px}
+  .pane > .ph{font-family:"IBM Plex Mono",monospace;font-size:15px;letter-spacing:.05em;text-transform:uppercase;color:var(--navy);font-weight:600;margin:0 0 9px;display:flex;align-items:center;gap:7px}
+  .pane > .ph::before{content:"\2699";font-size:16px;line-height:1}
+  .pane ol,.pane ul{margin:0;padding-left:20px}.pane li{margin:0 0 6px;font-size:19px}
+  .pane p{margin:0 0 8px;font-size:19px}
+  .pane code{font-family:"IBM Plex Mono",monospace;font-size:17px;background:#e7ecf7;color:var(--navy);padding:1px 6px;border-radius:5px}
+
+  .note{border-radius:11px;padding:12px 14px;margin:0 0 13px;font-size:20px;border:1px solid;line-height:1.55}
+  .note b{display:block;font-size:17px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px;font-family:"IBM Plex Mono",monospace}
+  .note.why{background:#eef2fb;border-color:#d5def3;color:#23365e}.note.why b{color:var(--navy)}
+  .note.warn{background:#fbe8cd33;border-color:var(--amber-soft);color:#6b4410}.note.warn b{color:#a4651a}
+  .note.tip{background:var(--ok-soft);border-color:#c9e6d6;color:#1c5236}.note.tip b{color:var(--ok)}
+  .note.check{background:var(--ok-soft);border-color:#c9e6d6;color:#1c5236}.note.check b{color:var(--ok)}
+  .note.check b::before{content:"✅ ";}
+  .note code{font-family:"IBM Plex Mono",monospace;font-size:17px;background:rgba(0,0,0,.05);padding:1px 5px;border-radius:5px}
+
+  /* tap-to-copy chips: every code chip outside a dark .fx box is copyable */
+  code.cc{cursor:copy;position:relative;-webkit-tap-highlight-color:transparent}
+  code.cc::after{content:"⧉";font-size:.78em;margin-left:5px;opacity:.55}
+  code.cc.copied{background:var(--ok) !important;color:#fff !important}
+  code.cc.copied::after{content:"✓";opacity:1}
+
+  table.cols{width:100%;border-collapse:collapse;margin:0 0 13px;font-size:18px;background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+  table.cols th{background:#f7f9fc;font-family:"IBM Plex Mono",monospace;font-size:15px;letter-spacing:.04em;text-transform:uppercase;color:var(--navy);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+  table.cols td{padding:7px 10px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  table.cols tr:last-child td{border-bottom:none}
+
+  .done{-webkit-appearance:none;appearance:none;width:100%;min-height:var(--tap);margin-top:6px;border:1.5px solid var(--navy);border-radius:11px;background:#fff;color:var(--navy);font-family:inherit;font-size:21px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;gap:8px}
+  .done:active{background:var(--line-soft)}
+  details.isdone .done{background:var(--ok);border-color:var(--ok);color:#fff}
+
+  footer{margin:34px 0 10px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:18px;text-align:center;line-height:1.6}
+  footer a{color:var(--navy);font-weight:600}
+
+  @media (prefers-reduced-motion: reduce){*{transition:none !important;scroll-behavior:auto !important}}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap mast-inner">
+    <div class="brandmark" aria-hidden="true">
+      <svg viewBox="0 0 48 48" width="46" height="46" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="16" stroke="rgba(255,255,255,.5)" stroke-width="1.8"/>
+        <path d="M16 24l6 6 11-13" stroke="rgba(224,138,30,.95)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="mast-copy">
+      <p class="kicker">3rd-Party Declarations · Part 1 of 3</p>
+      <h1>Foundations: the list, the app, and the multi-row form</h1>
+      <p class="sub">This part takes you from an empty canvas to a working multi-row declaration form: the <strong>3rd party inventory</strong> list verified, a tablet app connected to it, and a gallery where users add, fill and delete system records — with every keystroke safely stored. <strong>Every step is self-contained</strong>, and every name, number and formula has a copy button.</p>
+      <div class="meta">
+        <span><b>10</b> steps</span>
+        <span><b>1</b> list verified</span>
+        <span><b>14</b> fields wired</span>
+        <span>smoke test 🧪</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="sticky">
+  <div class="wrap">
+    <div class="progress"><i id="bar"></i></div>
+    <div class="progtext"><span id="progLabel">0 of 10 steps done</span><button id="reset" type="button">Reset</button></div>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <section class="block" id="intro">
+    <h2 class="sec">What you're building</h2>
+    <div class="note tip"><b>The series in one line</b>A Power Apps declaration form where business users record <strong>one or more third-party applications</strong> (14 required fields each), review them, and submit them all at once into the existing <code>3rd party inventory</code> SharePoint list — with an automatic email to the IAM team. Part 1 builds the form itself; Part 2 adds validation and guidance; Part 3 wires up submission, notification and publishing.</div>
+    <div class="note why"><b>The architecture, in one paragraph</b>Every row of the form lives in a local collection called <code>colSystems</code> — not in the on-screen controls. Each input <em>immediately</em> writes its value back into the collection the moment it changes. That one habit makes the whole app safe: rows can scroll out of sight, rows can be deleted from the middle, and nothing is ever lost or shuffled, because the collection — not the controls — is the single source of truth. Step A10 will make you prove this to yourself.</div>
+    <div class="note warn"><b>Two placeholders to substitute</b>Wherever you see <code>&lt;YOUR-SITE-URL&gt;</code> (your SharePoint site) or <code>&lt;IAM-DL-EMAIL&gt;</code> (the IAM distribution list address), substitute your own values. Everything else is paste-as-is.</div>
+    <div class="note why"><b>Tap any chip to copy</b>Dark boxes have a <strong>Copy</strong> button. Every inline chip like <code class="cc">galSystems</code> is tap-to-copy — the ⧉ mark is the reminder. Paste, never retype.</div>
+  </section>
+
+  <section class="block" id="phase-list">
+    <h2 class="sec">First, the list</h2>
+
+    <details class="step" id="a1" open>
+      <summary><span class="dot"></span><span class="num">A1</span><span class="stitle">Verify the 3rd party inventory list</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do">The list already exists — this step makes sure it looks exactly the way the formulas in Part 3 expect. Open <code>&lt;YOUR-SITE-URL&gt;</code> in the browser → open the <code class="cc">3rd party inventory</code> list → gear icon → <strong>List settings</strong>. Compare the Columns section against this table:</p>
+        <table class="cols">
+          <tr><th>#</th><th>Display name</th><th>Expected type</th><th>Form fills it?</th></tr>
+          <tr><td>1</td><td><code class="cc">Application Name</code></td><td>Text (likely the renamed Title)</td><td>Yes</td></tr>
+          <tr><td>2</td><td>⚠ <code class="cc">Vendor/ Provider Name</code> — space after the <code>/</code></td><td>Text</td><td>Yes</td></tr>
+          <tr><td>3</td><td>⚠ <code class="cc">Business owner</code> — lowercase o</td><td>Text</td><td>Yes</td></tr>
+          <tr><td>4</td><td><code class="cc">Application Purpose</code></td><td>Multiline text</td><td>Yes</td></tr>
+          <tr><td>5</td><td><code class="cc">IT Custodian</code></td><td>Text</td><td>Yes</td></tr>
+          <tr><td>6</td><td><code class="cc">Admin Accounts Used</code></td><td>Text</td><td>Yes</td></tr>
+          <tr><td>7</td><td>⚠ <code class="cc">Permissions / Access levels</code> — lowercase l</td><td>Multiline text</td><td>Yes</td></tr>
+          <tr><td>8</td><td><code class="cc">Support / Vendor Contact Information</code></td><td>Text</td><td>Yes</td></tr>
+          <tr><td>9</td><td><code class="cc">IAM Role</code></td><td>Text or Choice — record it</td><td>Yes</td></tr>
+          <tr><td>10</td><td><code class="cc">Access Link</code></td><td>Text</td><td>Yes</td></tr>
+          <tr><td>11</td><td>⚠ <code>Division␠</code> — <strong>trailing space</strong> in the name</td><td>Text or Choice — record it</td><td>Yes</td></tr>
+          <tr><td>12</td><td><code class="cc">Status</code></td><td>Text or Choice — record it</td><td>Yes</td></tr>
+          <tr><td>13</td><td><code class="cc">Submission Date</code></td><td>Text or Date/Time — record it</td><td>Yes (auto)</td></tr>
+          <tr><td>14</td><td><code class="cc">IAM Notes</code></td><td>Text</td><td>No</td></tr>
+          <tr><td>15</td><td><code class="cc">Submission Cycle</code></td><td>Text</td><td>No</td></tr>
+          <tr><td>16</td><td><code class="cc">Handover Status</code></td><td>Text or Choice — record it</td><td>Yes</td></tr>
+          <tr><td>17</td><td><code class="cc">Number of Accounts</code></td><td>Text or Number — record it</td><td>Yes</td></tr>
+          <tr><td>18</td><td><code class="cc">Report Export</code></td><td>Yes/No</td><td>No</td></tr>
+          <tr><td>19</td><td><code class="cc">Onboarded to IAM Platform</code></td><td>Yes/No</td><td>No</td></tr>
+          <tr><td>20</td><td><code class="cc">Access Review Status</code></td><td>Text</td><td>No</td></tr>
+          <tr><td>21</td><td><code class="cc">Review Frequency</code></td><td>Text</td><td>No</td></tr>
+        </table>
+        <div class="pane">
+          <p class="ph">Your column worksheet — fill this in now, Part 3 needs it</p>
+          <p>In List settings, click each of these six columns and write down its <strong>actual type</strong> (Single line of text? Choice? Number? Date and Time?):</p>
+          <ol>
+            <li><code class="cc">IAM Role</code> — Text or Choice?</li>
+            <li><code>Division␠</code> (the one with the trailing space) — Text or Choice?</li>
+            <li><code class="cc">Status</code> — Text or Choice?</li>
+            <li><code class="cc">Handover Status</code> — Text or Choice?</li>
+            <li><code class="cc">Number of Accounts</code> — Text or Number?</li>
+            <li><code class="cc">Submission Date</code> — Text or Date and Time?</li>
+          </ol>
+          <p>Step C5 (Part 3) has one formula line per answer — you'll adapt six lines at most, and the guide shows exactly how.</p>
+        </div>
+        <p class="do"><strong>Two checks and one addition while you're here:</strong></p>
+        <ol class="steps2">
+          <li><strong>Title check.</strong> If <code class="cc">Application Name</code> is the renamed built-in Title column (it usually is), that's fine. What matters: there must be <em>no separate Title column still marked "Require that this column contains information"</em> — that would make every submission fail in Part 3.</li>
+          <li><strong>Add the audit columns</strong> (skip if they already exist). List settings → <strong>Create column</strong> → name <code class="cc">Responder Name</code> → type <strong>Single line of text</strong> → OK. Repeat for <code class="cc">Responder Email</code>.</li>
+        </ol>
+        <div class="note warn"><b>The quirky names are load-bearing</b>Four column names contain deliberate-looking accidents — <code>Vendor/ Provider Name</code> (space after the slash), <code>Business owner</code> (lowercase o), <code>Permissions / Access levels</code> (lowercase l), and <code>Division </code> (trailing space). <strong>Do not rename them</strong> — live data and the formulas in this guide both use them as-is. In Power Apps you'll always accept IntelliSense autocomplete rather than hand-typing these.</div>
+        <div class="note check"><b>Check before moving on</b>All 21 columns present with matching names · your worksheet has six recorded types · no separate required Title column · <code>Responder Name</code> and <code>Responder Email</code> exist as Single line of text columns.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+  </section>
+
+  <section class="block" id="phase-shell">
+    <h2 class="sec">The app shell</h2>
+
+    <details class="step" id="a2">
+      <summary><span class="dot"></span><span class="num">A2</span><span class="stitle">Create the app and set three settings</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <ol class="steps2">
+          <li>Go to <code class="cc">make.powerapps.com</code> (check the correct environment, top right) → <strong>Create</strong> → <strong>Start with a blank canvas</strong> → <strong>Tablet size</strong>. Studio opens with an empty <em>Screen1</em>.</li>
+          <li><strong>Settings</strong> (gear icon, or File → Settings) → <strong>Display</strong>: confirm size is <code class="cc">1366</code> × <code class="cc">768</code>.</li>
+          <li>Settings → <strong>General</strong> (or <em>Updates → New</em> on newer Studio versions): turn <strong>OFF</strong> <em>Modern controls and themes</em>. This guide names classic properties (<code>HintText</code>, <code>Default</code>, <code>BorderColor</code>) — modern controls would rename half of them.</li>
+          <li>Settings → <strong>Updates</strong> → search for <em>Formula-level error management</em> → turn it <strong>ON</strong>. Part 3's submit formula uses <code>IfError</code>, which needs this switch.</li>
+          <li>Tree view → double-click <em>Screen1</em> → rename to <code class="cc">scrMain</code>.</li>
+        </ol>
+        <div class="note tip"><b>Save early</b>File → Save → name the app — <code class="cc">Third-Party Application Declaration</code> works. Autosave takes over from here.</div>
+        <div class="note check"><b>Check before moving on</b>An empty tablet app named and saved · Tree view shows a single screen called <code>scrMain</code> · modern controls off · formula-level error management on.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+
+    <details class="step" id="a3">
+      <summary><span class="dot"></span><span class="num">A3</span><span class="stitle">Connect the SharePoint list</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <ol class="steps2">
+          <li>Left rail → <strong>Data</strong> (cylinder icon) → <strong>Add data</strong> → search <code class="cc">SharePoint</code> → pick the SharePoint connector (sign in if asked).</li>
+          <li>In the site picker, paste <code>&lt;YOUR-SITE-URL&gt;</code> (or pick the site from Recent) → <strong>Connect</strong>.</li>
+          <li>Tick <code class="cc">3rd party inventory</code> in the list of lists → <strong>Connect</strong>.</li>
+        </ol>
+        <div class="note why"><b>Nothing to configure</b>The connection brings the columns along, quirky names and all. You won't touch the data source again until Part 3 — but connecting now means IntelliSense already knows every column name when you get there.</div>
+        <div class="note check"><b>Check before moving on</b>The Data pane lists <code>3rd party inventory</code> as a connected data source.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+
+    <details class="step" id="a4">
+      <summary><span class="dot"></span><span class="num">A4</span><span class="stitle">App.OnStart — collections, flags, and the first blank row</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do">Tree view → click <code class="cc">App</code> → property dropdown (top-left, next to the <code class="cc">fx</code> bar) → <strong>OnStart</strong> → <strong>Ctrl+A</strong> → paste:</p>
+        <p class="fxlabel">App · OnStart</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Set(gblColorBrand, ColorValue("#C8102E"));
+Set(gblColorInk, ColorValue("#1B2436"));
+Set(gblColorPaper, ColorValue("#F4F5F8"));
+ClearCollect(colIAMRoles, ["Manage", "Govern", "Not Involved"]);
+ClearCollect(colStatusValues, ["Active", "Decommissioned"]);
+ClearCollect(colHandoverValues, ["Handover Not Required", "Handed Over", "Pending Handover"]);
+ClearCollect(colDivisions, ["Operations &amp; Administration", "Information Technology", "Financial Planning &amp; Control", "Human Resources", "Strategy &amp; Transformation", "Marketing &amp; Communications", "Corporate &amp; Business Development", "Remedial", "In - Business Risk", "Treasury &amp; Investment", "Private Banking &amp; Wealth Management", "International Banking", "Wholesale Banking", "Retail Banking", "Corporate Secretariat", "Information Security", "Risk Management", "Credit &amp; Overseas Risk", "Compliance &amp; AML", "Internal Audit", "Legal"]);
+Set(gblShowErrors, false);
+Set(gblShowConfirm, false);
+Set(gblShowSuccess, false);
+Set(gblSubmitting, false);
+Set(gblNextSeq, 2);
+ClearCollect(colSystems, {RowID: GUID(), SeqNo: 1, AppName: "", Vendor: "", BizOwner: "", Purpose: "", Custodian: "", AdminAccts: "", Permissions: "", SupportContact: "", IAMRole: "", AccessLink: "", Division: "", Status: "", Handover: "", NumAccts: ""})</code></div>
+        <p class="do">Then run it once: Tree view → hover <code class="cc">App</code> → <strong>⋯</strong> → <strong>Run OnStart</strong>.</p>
+        <div class="note why"><b>What just happened</b>Three theme colors · four dropdown source collections (three roles, two statuses, three handover states, <strong>21 divisions</strong>) · four false flags for later parts · a sequence counter starting at 2 · and <code>colSystems</code> — the form's single source of truth — seeded with one blank row (SeqNo 1, every field empty).</div>
+        <div class="note warn"><b>Run OnStart resets the form</b>Re-running OnStart wipes any in-progress rows back to one blank row. While building, that's expected — you'll do it on purpose. Just don't be surprised.</div>
+        <div class="note check"><b>Check before moving on</b>Left rail → <strong>Variables</strong> (x icon) → Collections: five collections exist. <code>colSystems</code> holds exactly 1 row; <code>colDivisions</code> holds 21 rows.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+
+    <details class="step" id="a5">
+      <summary><span class="dot"></span><span class="num">A5</span><span class="stitle">The header band</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do">Four controls on <code class="cc">scrMain</code>. Insert each from the <strong>Insert</strong> menu, rename it in the Tree view (double-click the name), then set position/size in the Properties pane on the right.</p>
+        <ol class="steps2">
+          <li><strong>Rectangle</strong> → rename <code class="cc">recHeader</code> → X <code class="cc">0</code> · Y <code class="cc">0</code> · Width <code class="cc">1366</code> · Height <code class="cc">80</code>. Property dropdown → <strong>Fill</strong> → Ctrl+A → paste: <code class="cc">gblColorBrand</code></li>
+          <li><strong>Text label</strong> → rename <code class="cc">lblAppTitle</code> → X <code class="cc">24</code> · Y <code class="cc">10</code> · Width <code class="cc">800</code> · Height <code class="cc">36</code> → Text: <code class="cc">"Third-Party Application Declaration"</code> → right pane: Font size <code class="cc">22</code>, <strong>Bold</strong>, font colour white.</li>
+          <li><strong>Text label</strong> → rename <code class="cc">lblAppSubtitle</code> → X <code class="cc">24</code> · Y <code class="cc">46</code> · Width <code class="cc">800</code> · Height <code class="cc">26</code> → Text: <code class="cc">"Declare the third-party systems your division uses — all fields are required"</code> → Font size <code class="cc">14</code>, font colour white.</li>
+          <li><strong>Text label</strong> → rename <code class="cc">lblUserBadge</code> → X <code class="cc">1020</code> · Y <code class="cc">24</code> · Width <code class="cc">322</code> · Height <code class="cc">32</code> → right pane: Font size <code class="cc">14</code>, font colour white, text alignment <strong>Right</strong>. Property dropdown → <strong>Text</strong> → Ctrl+A → paste:</li>
+        </ol>
+        <p class="fxlabel">lblUserBadge · Text</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>User().FullName</code></div>
+        <div class="note tip"><b>Brand colour, one variable</b><code>gblColorBrand</code> is the bank red set in OnStart. If branding ever changes, one line in OnStart re-skins the app.</div>
+        <div class="note check"><b>Check before moving on</b>A red band across the top: bold title, smaller subtitle, and your own name sitting right-aligned in the band.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+  </section>
+
+  <section class="block" id="phase-form">
+    <h2 class="sec">The multi-row form</h2>
+
+    <details class="step" id="a6">
+      <summary><span class="dot"></span><span class="num">A6</span><span class="stitle">The gallery — one card per system</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <ol class="steps2">
+          <li>Insert → Gallery → <strong>Blank vertical</strong>. Rename it <code class="cc">galSystems</code>.</li>
+          <li>The Items panel may pop up asking for a data source — choose <code class="cc">colSystems</code> (or set the property dropdown → <strong>Items</strong> → paste <code class="cc">colSystems</code>).</li>
+          <li>Properties pane: X <code class="cc">0</code> · Y <code class="cc">96</code> · Width <code class="cc">1366</code> · Height <code class="cc">580</code>.</li>
+          <li>Property dropdown → <strong>TemplateSize</strong> → Ctrl+A → type: <code class="cc">600</code></li>
+          <li>Now click the <strong>pencil icon</strong> in the gallery's top-left corner — this puts you <em>inside the template</em>, so everything you insert next lands in the row, not on the screen. Insert → <strong>Rectangle</strong> → rename <code class="cc">recRowCard</code> → X <code class="cc">8</code> · Y <code class="cc">8</code> · Width <code class="cc">1318</code> · Height <code class="cc">584</code> → right pane: Fill white, border 1px light grey.</li>
+          <li>Still inside the template: Insert → <strong>Text label</strong> → rename <code class="cc">lblRowNum</code> → X <code class="cc">16</code> · Y <code class="cc">14</code> · Width <code class="cc">200</code> → <strong>Bold</strong>. Property dropdown → <strong>Text</strong> → Ctrl+A → paste:</li>
+        </ol>
+        <p class="fxlabel">lblRowNum · Text</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"System " &amp; ThisItem.SeqNo</code></div>
+        <ol class="steps2" start="7">
+          <li>Still inside the template: Insert → <strong>Button</strong> → rename <code class="cc">btnDeleteRow</code> → X <code class="cc">1180</code> · Y <code class="cc">14</code> · Width <code class="cc">130</code> · Height <code class="cc">32</code> → Text: <code class="cc">"Delete Row"</code>. Property dropdown → <strong>OnSelect</strong> → Ctrl+A → paste:</li>
+        </ol>
+        <p class="fxlabel">btnDeleteRow · OnSelect</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Remove(colSystems, ThisItem)</code></div>
+        <div class="note warn"><b>Fixed height, on purpose</b><code>TemplateSize</code> stays a fixed <code>600</code>. Do not switch to a flexible-height gallery — inputs inside flexible-height galleries misbehave, and this guide's geometry assumes fixed rows.</div>
+        <div class="note check"><b>Check before moving on</b>One white card in the gallery reading <strong>System 1</strong> with a Delete Row button top-right. (Clicking Delete now removes the only row — Tree view → <code>App</code> → ⋯ → Run OnStart brings it back.)</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+
+    <details class="step" id="a7">
+      <summary><span class="dot"></span><span class="num">A7</span><span class="stitle">Left column — seven fields</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do">Seven label + input pairs, all <strong>inside the gallery template</strong> (pencil icon first — check the breadcrumb above the canvas says you're in <code class="cc">galSystems</code>). The drill for every field: Insert → <strong>Text label</strong>, rename, position, set Text · Insert → <strong>Text input</strong>, rename, position · property dropdown → <strong>Default</strong> → Ctrl+A → paste · property dropdown → <strong>OnChange</strong> → Ctrl+A → paste. All labels and inputs: X <code class="cc">16</code> · Width <code class="cc">630</code>. Labels Height <code class="cc">20</code>, inputs Height <code class="cc">40</code>.</p>
+
+        <p class="do"><strong>1 · Application Name.</strong> Label <code class="cc">lblAppName</code> at Y <code class="cc">48</code>, Text <code class="cc">"Application Name"</code>. Input <code class="cc">txtAppName</code> at Y <code class="cc">72</code>:</p>
+        <p class="fxlabel">txtAppName · Default</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>ThisItem.AppName</code></div>
+        <p class="fxlabel">txtAppName · OnChange</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Patch(colSystems, ThisItem, {AppName: Self.Text})</code></div>
+
+        <p class="do"><strong>2 · Vendor/Provider Name.</strong> Label <code class="cc">lblVendor</code> at Y <code class="cc">120</code>, Text <code class="cc">"Vendor/Provider Name"</code>. Input <code class="cc">txtVendor</code> at Y <code class="cc">144</code>:</p>
+        <p class="fxlabel">txtVendor · Default</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>ThisItem.Vendor</code></div>
+        <p class="fxlabel">txtVendor · OnChange</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Patch(colSystems, ThisItem, {Vendor: Self.Text})</code></div>
+
+        <p class="do"><strong>3 · Business Owner.</strong> Label <code class="cc">lblOwner</code> at Y <code class="cc">192</code>, Text <code class="cc">"Business Owner"</code>. Input <code class="cc">txtOwner</code> at Y <code class="cc">216</code>:</p>
+        <p class="fxlabel">txtOwner · Default</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>ThisItem.BizOwner</code></div>
+        <p class="fxlabel">txtOwner · OnChange</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Patch(colSystems, ThisItem, {BizOwner: Self.Text})</code></div>
+
+        <p class="do"><strong>4 · Application Purpose</strong> — this one is multiline. Label <code class="cc">lblPurpose</code> at Y <code class="cc">264</code>, Text <code class="cc">"Application Purpose"</code>. Input <code class="cc">txtPurpose</code> at Y <code class="cc">288</code>, and additionally set property dropdown → <strong>Mode</strong> → <code class="cc">TextMode.MultiLine</code>:</p>
+        <p class="fxlabel">txtPurpose · Default</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>ThisItem.Purpose</code></div>
+        <p class="fxlabel">txtPurpose · OnChange</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Patch(colSystems, ThisItem, {Purpose: Self.Text})</code></div>
+
+        <p class="do"><strong>5 · IT Custodian.</strong> Label <code class="cc">lblCustodian</code> at Y <code class="cc">336</code>, Text <code class="cc">"IT Custodian"</code>. Input <code class="cc">txtCustodian</code> at Y <code class="cc">360</code>:</p>
+        <p class="fxlabel">txtCustodian · Default</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>ThisItem.Custodian</code></div>
+        <p class="fxlabel">txtCustodian · OnChange</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Patch(colSystems, ThisItem, {Custodian: Self.Text})</code></div>
+
+        <p class="do"><strong>6 · Admin Accounts Used.</strong> Label <code class="cc">lblAdminAccts</code> at Y <code class="cc">408</code>, Text <code class="cc">"Admin Accounts Used"</code>. Input <code class="cc">txtAdminAccts</code> at Y <code class="cc">432</code>:</p>
+        <p class="fxlabel">txtAdminAccts · Default</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>ThisItem.AdminAccts</code></div>
+        <p class="fxlabel">txtAdminAccts · OnChange</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Patch(colSystems, ThisItem, {AdminAccts: Self.Text})</code></div>
+
+        <p class="do"><strong>7 · Permissions / Access Levels</strong> — multiline again. Label <code class="cc">lblPermissions</code> at Y <code class="cc">480</code>, Text <code class="cc">"Permissions / Access Levels"</code>. Input <code class="cc">txtPermissions</code> at Y <code class="cc">504</code>, Mode → <code class="cc">TextMode.MultiLine</code>:</p>
+        <p class="fxlabel">txtPermissions · Default</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>ThisItem.Permissions</code></div>
+        <p class="fxlabel">txtPermissions · OnChange</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Patch(colSystems, ThisItem, {Permissions: Self.Text})</code></div>
+
+        <div class="note why"><b>Why every input patches itself</b><code>Default</code> reads the row's stored value; <code>OnChange</code> writes edits straight back into <code>colSystems</code>. Because both use <code>ThisItem</code>/<code>Self</code>, the formulas are identical in every row and every field except the field name — and the collection is always up to date, no matter what the gallery does with its on-screen controls.</div>
+        <div class="note check"><b>Check before moving on</b>Seven stacked fields down the left half of the card. Type into any of them, then open Variables → <code>colSystems</code> — the value is already in the collection.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+
+    <details class="step" id="a8">
+      <summary><span class="dot"></span><span class="num">A8</span><span class="stitle">Right column — three inputs and four dropdowns</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do">Same drill, right half of the card: everything at X <code class="cc">676</code> · Width <code class="cc">630</code>, labels Height <code class="cc">20</code>, inputs Height <code class="cc">40</code>. Four of these are <strong>Drop down</strong> controls (Insert → Input → Drop down) — each needs <strong>Items</strong>, <strong>AllowEmptySelection</strong>, <strong>Default</strong> and <strong>OnChange</strong>.</p>
+
+        <p class="do"><strong>1 · Support / Vendor Contact.</strong> Label <code class="cc">lblSupport</code> at Y <code class="cc">48</code>, Text <code class="cc">"Support / Vendor Contact"</code>. Text input <code class="cc">txtSupport</code> at Y <code class="cc">72</code>:</p>
+        <p class="fxlabel">txtSupport · Default</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>ThisItem.SupportContact</code></div>
+        <p class="fxlabel">txtSupport · OnChange</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Patch(colSystems, ThisItem, {SupportContact: Self.Text})</code></div>
+
+        <p class="do"><strong>2 · IAM Role</strong> — first dropdown. Label <code class="cc">lblIAMRole</code> at Y <code class="cc">120</code>, Text <code class="cc">"IAM Role"</code>. <strong>Drop down</strong> <code class="cc">drpIAMRole</code> at Y <code class="cc">144</code>. Property dropdown → <strong>AllowEmptySelection</strong> → Ctrl+A → type <code class="cc">true</code>, then:</p>
+        <p class="fxlabel">drpIAMRole · Items</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>colIAMRoles</code></div>
+        <p class="fxlabel">drpIAMRole · Default</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>ThisItem.IAMRole</code></div>
+        <p class="fxlabel">drpIAMRole · OnChange</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Patch(colSystems, ThisItem, {IAMRole: Self.Selected.Value})</code></div>
+
+        <p class="do"><strong>3 · Access Link.</strong> Label <code class="cc">lblAccessLink</code> at Y <code class="cc">192</code>, Text <code class="cc">"Access Link"</code>. Text input <code class="cc">txtAccessLink</code> at Y <code class="cc">216</code>:</p>
+        <p class="fxlabel">txtAccessLink · Default</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>ThisItem.AccessLink</code></div>
+        <p class="fxlabel">txtAccessLink · OnChange</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Patch(colSystems, ThisItem, {AccessLink: Self.Text})</code></div>
+
+        <p class="do"><strong>4 · Division.</strong> Label <code class="cc">lblDivision</code> at Y <code class="cc">264</code>, Text <code class="cc">"Division"</code>. <strong>Drop down</strong> <code class="cc">drpDivision</code> at Y <code class="cc">288</code>, AllowEmptySelection <code class="cc">true</code>:</p>
+        <p class="fxlabel">drpDivision · Items</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>colDivisions</code></div>
+        <p class="fxlabel">drpDivision · Default</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>ThisItem.Division</code></div>
+        <p class="fxlabel">drpDivision · OnChange</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Patch(colSystems, ThisItem, {Division: Self.Selected.Value})</code></div>
+
+        <p class="do"><strong>5 · Status.</strong> Label <code class="cc">lblStatus</code> at Y <code class="cc">336</code>, Text <code class="cc">"Status"</code>. <strong>Drop down</strong> <code class="cc">drpStatus</code> at Y <code class="cc">360</code>, AllowEmptySelection <code class="cc">true</code>:</p>
+        <p class="fxlabel">drpStatus · Items</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>colStatusValues</code></div>
+        <p class="fxlabel">drpStatus · Default</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>ThisItem.Status</code></div>
+        <p class="fxlabel">drpStatus · OnChange</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Patch(colSystems, ThisItem, {Status: Self.Selected.Value})</code></div>
+
+        <p class="do"><strong>6 · Handover Status.</strong> Label <code class="cc">lblHandover</code> at Y <code class="cc">408</code>, Text <code class="cc">"Handover Status"</code>. <strong>Drop down</strong> <code class="cc">drpHandover</code> at Y <code class="cc">432</code>, AllowEmptySelection <code class="cc">true</code>:</p>
+        <p class="fxlabel">drpHandover · Items</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>colHandoverValues</code></div>
+        <p class="fxlabel">drpHandover · Default</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>ThisItem.Handover</code></div>
+        <p class="fxlabel">drpHandover · OnChange</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Patch(colSystems, ThisItem, {Handover: Self.Selected.Value})</code></div>
+
+        <p class="do"><strong>7 · Number of Accounts.</strong> Label <code class="cc">lblNumAccts</code> at Y <code class="cc">480</code>, Text <code class="cc">"Number of Accounts"</code>. Text input <code class="cc">txtNumAccts</code> at Y <code class="cc">504</code>, and additionally property dropdown → <strong>Format</strong> → <code class="cc">TextFormat.Number</code>:</p>
+        <p class="fxlabel">txtNumAccts · Default</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>ThisItem.NumAccts</code></div>
+        <p class="fxlabel">txtNumAccts · OnChange</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Patch(colSystems, ThisItem, {NumAccts: Self.Text})</code></div>
+
+        <div class="note warn"><b>AllowEmptySelection is not optional</b>A classic dropdown silently auto-selects its first item unless <code>AllowEmptySelection</code> is <code>true</code> with a blank Default. Skip it and every new row is born with "Manage" / "Operations &amp; Administration" pre-picked — which quietly defeats the mandatory-field validation coming in Part 2.</div>
+        <div class="note check"><b>Check before moving on</b>Fourteen fields fill the card in two columns. All four dropdowns start <strong>empty</strong>, and each offers the right values (3 roles · 21 divisions · 2 statuses · 3 handover states).</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+
+    <details class="step" id="a9">
+      <summary><span class="dot"></span><span class="num">A9</span><span class="stitle">Footer bar — Add System and the row count</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do">Back <strong>out</strong> of the gallery template first — click empty canvas or press Esc, and check the breadcrumb: the next three controls belong to <code class="cc">scrMain</code>, not the template.</p>
+        <ol class="steps2">
+          <li><strong>Rectangle</strong> → rename <code class="cc">recFooter</code> → X <code class="cc">0</code> · Y <code class="cc">692</code> · Width <code class="cc">1366</code> · Height <code class="cc">76</code> → Fill: <code class="cc">gblColorInk</code> (property dropdown → Fill → paste).</li>
+          <li><strong>Button</strong> → rename <code class="cc">btnAddSystem</code> → X <code class="cc">24</code> · Y <code class="cc">710</code> · Width <code class="cc">200</code> · Height <code class="cc">40</code> → Text: <code class="cc">"+ Add System"</code>. Property dropdown → <strong>OnSelect</strong> → Ctrl+A → paste:</li>
+        </ol>
+        <p class="fxlabel">btnAddSystem · OnSelect</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Collect(colSystems, {RowID: GUID(), SeqNo: gblNextSeq, AppName: "", Vendor: "", BizOwner: "", Purpose: "", Custodian: "", AdminAccts: "", Permissions: "", SupportContact: "", IAMRole: "", AccessLink: "", Division: "", Status: "", Handover: "", NumAccts: ""});
+Set(gblNextSeq, gblNextSeq + 1)</code></div>
+        <ol class="steps2" start="3">
+          <li><strong>Text label</strong> → rename <code class="cc">lblSystemCount</code> → X <code class="cc">240</code> · Y <code class="cc">716</code> · Width <code class="cc">420</code> · Height <code class="cc">28</code> → font colour white. Property dropdown → <strong>Text</strong> → Ctrl+A → paste:</li>
+        </ol>
+        <p class="fxlabel">lblSystemCount · Text</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>CountRows(colSystems) &amp; " system(s) in this declaration"</code></div>
+        <div class="note tip"><b>The footer isn't finished</b>The Submit button and the form-level error message join this bar in Part 2 — the space to the right is reserved for them.</div>
+        <div class="note check"><b>Check before moving on</b>Dark footer bar with <strong>+ Add System</strong> and a live count. Click the button: a fresh <strong>System 2</strong> card appears in the gallery and the count says 2. Delete it: the count says 1.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+
+    <details class="step" id="a10">
+      <summary><span class="dot"></span><span class="num">A10</span><span class="stitle">The smoke test — prove the architecture</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do">Five minutes that buy total confidence in everything Parts 2 and 3 build on. Press <strong>F5</strong> (Preview):</p>
+        <ol class="steps2">
+          <li>Click <strong>+ Add System</strong> twice — three cards: System 1, 2, 3.</li>
+          <li>Give each row a distinct Application Name — <code class="cc">Alpha</code>, <code class="cc">Bravo</code>, <code class="cc">Charlie</code> — and fill a couple more fields in each, including a dropdown pick.</li>
+          <li><strong>Scroll test:</strong> scroll the gallery so System 1 leaves the screen, then scroll back. Every value is still there.</li>
+          <li><strong>Delete-the-middle test:</strong> click <strong>Delete Row</strong> on System 2 (<em>Bravo</em>). Two cards remain — System 1 still says <em>Alpha</em>, System 3 still says <em>Charlie</em>. Nothing shifted, nothing bled between rows.</li>
+          <li>Leave Preview (Esc). Left rail → <strong>Variables</strong> → Collections → <code class="cc">colSystems</code>: the surviving two rows, exactly as typed. Type one more character in any field and watch the collection update on the next refresh — every keystroke lands in the collection, not just on screen.</li>
+        </ol>
+        <div class="note why"><b>Why we never read the controls</b>Galleries recycle their on-screen controls: scroll far enough and the same physical input is redrawn for a different row; delete a row and control state can shift into its neighbour. Apps that read <em>control values</em> at submit time lose data to exactly these two behaviours. This app never will — Parts 2 and 3 validate and submit from <code>colSystems</code> only, which you have just watched stay correct through both.</div>
+        <div class="note check"><b>Check before moving on</b>Both tests pass: scrolled-away values persist, and deleting the middle row leaves the other rows' values untouched and correctly paired. The foundation is solid — on to Part 2. 🏗️</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+  </section>
+
+  <footer>
+    Part 1 — Foundations: list verified, app connected, and a 14-field multi-row form that survives scrolling and deletes.<br>
+    The series: &nbsp;<a href="index.html">Series home</a> &nbsp;·&nbsp; <strong>Part 1 — Foundations</strong> &nbsp;·&nbsp; <a href="part2.html">Part 2 — Validation</a> &nbsp;·&nbsp; <a href="part3.html">Part 3 — Submit &amp; ship</a>
+  </footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var mem={};
+  var store={
+    get:function(k){try{return localStorage.getItem(k);}catch(e){return (k in mem)?mem[k]:null;}},
+    set:function(k,v){try{localStorage.setItem(k,v);}catch(e){mem[k]=v;}},
+    del:function(k){try{localStorage.removeItem(k);}catch(e){delete mem[k];}}
+  };
+  var KEY="bbk3pDeclareP1_v1";
+
+  function fallbackCopy(t){var ta=document.createElement("textarea");ta.value=t;ta.setAttribute("readonly","");ta.style.position="fixed";ta.style.top="-1000px";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");}catch(e){}document.body.removeChild(ta);}
+  function copyText(text,onDone){
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(onDone,function(){fallbackCopy(text);onDone();});}
+    else{fallbackCopy(text);onDone();}
+  }
+  document.querySelectorAll(".fx .copy").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      var code=btn.parentElement.querySelector("code");
+      copyText(code?code.textContent:"",function(){
+        btn.classList.add("copied");btn.textContent="✓";
+        setTimeout(function(){btn.classList.remove("copied");btn.textContent="Copy";},1300);
+      });
+    });
+  });
+  document.querySelectorAll("code.cc").forEach(function(chip){
+    chip.setAttribute("title","Tap to copy");
+    chip.addEventListener("click",function(){
+      copyText(chip.textContent,function(){
+        chip.classList.add("copied");
+        setTimeout(function(){chip.classList.remove("copied");},1100);
+      });
+    });
+  });
+
+  var steps=Array.prototype.slice.call(document.querySelectorAll("details.step"));
+  var total=steps.length;
+  var bar=document.getElementById("bar");
+  var label=document.getElementById("progLabel");
+  function loadDone(){var raw=store.get(KEY);if(!raw)return {};try{return JSON.parse(raw)||{};}catch(e){return {};}}
+  function saveDone(obj){store.set(KEY,JSON.stringify(obj));}
+  var doneMap=loadDone();
+  function refreshProgress(){
+    var n=0;
+    steps.forEach(function(d){if(d.classList.contains("isdone"))n++;});
+    bar.style.width=(total?Math.round(n/total*100):0)+"%";
+    label.textContent=n+" of "+total+" steps done";
+  }
+  steps.forEach(function(d){
+    if(doneMap[d.id])d.classList.add("isdone");
+    var btn=d.querySelector(".done");
+    function syncBtn(){btn.textContent=d.classList.contains("isdone")?"✓ Done — tap to undo":"Mark step done";}
+    syncBtn();
+    btn.addEventListener("click",function(){d.classList.toggle("isdone");doneMap[d.id]=d.classList.contains("isdone");saveDone(doneMap);syncBtn();refreshProgress();});
+  });
+  refreshProgress();
+  document.getElementById("reset").addEventListener("click",function(){
+    steps.forEach(function(d){d.classList.remove("isdone");d.querySelector(".done").textContent="Mark step done";});
+    doneMap={};store.del(KEY);refreshProgress();
+  });
+})();
+</script>
+</body>
+</html>

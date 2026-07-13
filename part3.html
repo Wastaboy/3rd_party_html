@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F3B6E">
+<title>3rd-Party Declarations — Part 3: Confirm, submit, notify, and ship</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1F3B6E; --navy-deep:#142a52; --ink:#0f1f3d;
+    --amber:#E08A1E; --amber-soft:#fbe8cd;
+    --paper:#F4F5F8; --card:#fff; --line:#e3e6ee; --line-soft:#eef1f7;
+    --navy-tint:#eef0f6; --faint:#97a1b4;
+    --text:#1b2436; --muted:#5b6678;
+    --code-bg:#0f1f3d; --code-text:#e9edf7;
+    --ok:#1f8a52; --ok-soft:#e3f3ea;
+    --green:#228b57; --red:#c83737; --gray:#788291;
+    --radius:14px; --tap:46px; --sh-sm:0 1px 2px rgba(16,31,61,.04);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--text);font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:24px;line-height:1.62;-webkit-font-smoothing:antialiased;padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+  .wrap{max-width:760px;margin:0 auto;padding:0 16px;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+
+  header.mast{background:radial-gradient(120% 140% at 100% 0%, rgba(224,138,30,.22), transparent 55%),linear-gradient(160deg,var(--navy) 0%,var(--navy-deep) 100%);color:#fff;padding:calc(28px + env(safe-area-inset-top)) 0 26px;border-bottom:3px solid var(--amber)}
+  .mast-inner{display:flex;gap:18px;align-items:center}
+  .mast-copy{flex:1;min-width:0}
+  .brandmark{flex:none;width:60px;height:60px;border-radius:15px;background:linear-gradient(160deg,#274982,#1a345f);border:1px solid rgba(255,255,255,.18);box-shadow:0 8px 22px -10px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.12);display:grid;place-items:center}
+  .kicker{font-family:"IBM Plex Mono",monospace;font-size:16px;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);font-weight:500;margin:0 0 10px}
+  .mast h1{font-family:"IBM Plex Serif",Georgia,serif;font-weight:600;font-size:42px;line-height:1.12;margin:0 0 8px;letter-spacing:-.01em}
+  .mast p.sub{margin:0;color:#c7d2e8;font-size:21px;max-width:48ch}
+  .mast .meta{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px}
+  .mast .meta span{font-family:"IBM Plex Mono",monospace;font-size:16px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);padding:5px 9px;border-radius:999px;color:#dde6f5}
+  .mast .meta span b{color:#fff;font-weight:600}
+  @media(max-width:480px){ .brandmark{width:50px;height:50px} .mast h1{font-size:34px} }
+
+  .sticky{position:sticky;top:0;z-index:40;background:rgba(244,245,248,.86);backdrop-filter:saturate(180%) blur(12px);-webkit-backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+  .progress{height:5px;background:var(--line);overflow:hidden}
+  .progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--navy),var(--amber));transition:width .35s ease}
+  .progtext{font-family:"IBM Plex Mono",monospace;font-size:15px;color:var(--muted);padding:6px 0 8px;display:flex;justify-content:space-between;align-items:center}
+  .progtext button{background:none;border:none;color:var(--navy);font-family:inherit;font-size:15px;cursor:pointer;text-decoration:underline;padding:4px}
+
+  section.block{margin:26px 0}
+  section.block > h2.sec{font-family:"IBM Plex Serif",serif;font-size:29px;font-weight:600;color:var(--navy);margin:0 0 4px;letter-spacing:-.01em;scroll-margin-top:120px}
+  section.block > p.lead{margin:0 0 14px;color:var(--muted);font-size:21px}
+
+  .tldr{background:#fffdf8;border:1px dashed #ecd6ad;border-radius:12px;padding:13px 15px;margin:0 0 15px;font-size:20px}
+  .tldr b{display:block;font-family:"IBM Plex Mono",monospace;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:#a4651a;margin-bottom:4px}
+
+  details.step{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin:12px 0;overflow:hidden;scroll-margin-top:118px;box-shadow:var(--sh-sm)}
+  details.step[open]{box-shadow:0 6px 24px -12px rgba(16,31,61,.28);border-color:#d4dae8}
+  summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:15px 16px;min-height:var(--tap);user-select:none;-webkit-tap-highlight-color:transparent}
+  summary::-webkit-details-marker{display:none}
+  summary .num{flex:none;min-width:30px;height:30px;padding:0 5px;border-radius:9px;background:var(--navy);color:#fff;display:grid;place-items:center;font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:18px}
+  details.isdone summary .num{background:var(--ok)}
+  summary .stitle{flex:1;font-weight:600;font-size:22px;line-height:1.3}
+  summary .chev{flex:none;color:var(--muted);transition:transform .2s ease}
+  details[open] summary .chev{transform:rotate(90deg)}
+  summary .dot{flex:none;width:9px;height:9px;border-radius:50%;border:2px solid var(--line)}
+  details.isdone summary .dot{background:var(--ok);border-color:var(--ok)}
+  .body{padding:2px 16px 18px;border-top:1px solid var(--line-soft)}
+  .body > *:first-child{margin-top:14px}
+  .body p{margin:0 0 12px}
+  p.do{margin:0 0 12px}
+  .body ul,.body ol{margin:0 0 12px;padding-left:22px}.body li{margin:0 0 8px}
+  ol.steps2{counter-reset:s2;list-style:none;padding-left:0}
+  ol.steps2 > li{position:relative;padding:2px 0 10px 40px;margin:0}
+  ol.steps2 > li::before{counter-increment:s2;content:counter(s2);position:absolute;left:0;top:0;width:28px;height:28px;border-radius:8px;background:var(--navy-tint);color:var(--navy);font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:16px;display:grid;place-items:center;border:1px solid #dbe3f5}
+
+  dl.props{margin:0 0 13px;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+  dl.props > div{display:grid;grid-template-columns:210px 1fr;border-top:1px solid var(--line-soft)}
+  dl.props > div:first-child{border-top:none}
+  dl.props dt{background:#f7f9fc;padding:9px 12px;font-family:"IBM Plex Mono",monospace;font-size:18px;color:var(--navy);font-weight:500;border-right:1px solid var(--line-soft)}
+  dl.props dd{margin:0;padding:9px 12px;font-size:20px}
+  dl.props dd code{font-family:"IBM Plex Mono",monospace;font-size:18px;background:#eef1f7;padding:1px 5px;border-radius:5px}
+  @media(max-width:430px){dl.props > div{grid-template-columns:130px 1fr}dl.props dt{font-size:15px;padding:8px 9px}dl.props dd{font-size:18px;padding:8px 10px}}
+
+  .fxlabel{font-family:"IBM Plex Mono",monospace;font-size:16px;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;margin:0 0 5px;font-weight:500}
+  .fx{position:relative;margin:0 0 13px}
+  .fx code{display:block;background:var(--code-bg);color:var(--code-text);font-family:"IBM Plex Mono",monospace;font-size:18px;line-height:1.55;padding:14px 84px 14px 16px;border-radius:11px;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;border:1px solid #1c3360}
+  .fx .copy{position:absolute;top:8px;right:8px;height:34px;min-width:34px;padding:0 11px;border:none;border-radius:8px;background:rgba(224,138,30,.95);color:#1b1206;font-family:"IBM Plex Mono",monospace;font-size:17px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .fx .copy:active{transform:scale(.96)}
+  .fx .copy.copied{background:var(--ok);color:#fff}
+  .fxgroup{border:1px solid var(--line);border-radius:12px;padding:12px 13px 2px;margin:0 0 14px;background:#fcfdff}
+  .fxgroup > .gh{font-family:"IBM Plex Mono",monospace;font-size:17px;font-weight:600;color:var(--navy);margin:0 0 8px;display:flex;align-items:center;gap:8px}
+  .fxgroup > .gh::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--amber)}
+
+  .pane{background:#f4f6fb;border:1px solid #dbe2f1;border-left:4px solid var(--navy);border-radius:11px;padding:12px 14px;margin:0 0 13px}
+  .pane > .ph{font-family:"IBM Plex Mono",monospace;font-size:15px;letter-spacing:.05em;text-transform:uppercase;color:var(--navy);font-weight:600;margin:0 0 9px;display:flex;align-items:center;gap:7px}
+  .pane > .ph::before{content:"\2699";font-size:16px;line-height:1}
+  .pane ol,.pane ul{margin:0;padding-left:20px}.pane li{margin:0 0 6px;font-size:19px}
+  .pane p{margin:0 0 8px;font-size:19px}
+  .pane code{font-family:"IBM Plex Mono",monospace;font-size:17px;background:#e7ecf7;color:var(--navy);padding:1px 6px;border-radius:5px}
+
+  .note{border-radius:11px;padding:12px 14px;margin:0 0 13px;font-size:20px;border:1px solid;line-height:1.55}
+  .note b{display:block;font-size:17px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px;font-family:"IBM Plex Mono",monospace}
+  .note.why{background:#eef2fb;border-color:#d5def3;color:#23365e}.note.why b{color:var(--navy)}
+  .note.warn{background:#fbe8cd33;border-color:var(--amber-soft);color:#6b4410}.note.warn b{color:#a4651a}
+  .note.tip{background:var(--ok-soft);border-color:#c9e6d6;color:#1c5236}.note.tip b{color:var(--ok)}
+  .note.check{background:var(--ok-soft);border-color:#c9e6d6;color:#1c5236}.note.check b{color:var(--ok)}
+  .note.check b::before{content:"✅ ";}
+  .note code{font-family:"IBM Plex Mono",monospace;font-size:17px;background:rgba(0,0,0,.05);padding:1px 5px;border-radius:5px}
+
+  /* tap-to-copy chips: every code chip outside a dark .fx box is copyable */
+  code.cc{cursor:copy;position:relative;-webkit-tap-highlight-color:transparent}
+  code.cc::after{content:"⧉";font-size:.78em;margin-left:5px;opacity:.55}
+  code.cc.copied{background:var(--ok) !important;color:#fff !important}
+  code.cc.copied::after{content:"✓";opacity:1}
+
+  table.cols{width:100%;border-collapse:collapse;margin:0 0 13px;font-size:18px;background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+  table.cols th{background:#f7f9fc;font-family:"IBM Plex Mono",monospace;font-size:15px;letter-spacing:.04em;text-transform:uppercase;color:var(--navy);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+  table.cols td{padding:7px 10px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  table.cols tr:last-child td{border-bottom:none}
+
+  .done{-webkit-appearance:none;appearance:none;width:100%;min-height:var(--tap);margin-top:6px;border:1.5px solid var(--navy);border-radius:11px;background:#fff;color:var(--navy);font-family:inherit;font-size:21px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;gap:8px}
+  .done:active{background:var(--line-soft)}
+  details.isdone .done{background:var(--ok);border-color:var(--ok);color:#fff}
+
+  footer{margin:34px 0 10px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:18px;text-align:center;line-height:1.6}
+  footer a{color:var(--navy);font-weight:600}
+
+  @media (prefers-reduced-motion: reduce){*{transition:none !important;scroll-behavior:auto !important}}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap mast-inner">
+    <div class="brandmark" aria-hidden="true">
+      <svg viewBox="0 0 48 48" width="46" height="46" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="16" stroke="rgba(255,255,255,.5)" stroke-width="1.8"/>
+        <path d="M16 24l6 6 11-13" stroke="rgba(224,138,30,.95)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="mast-copy">
+      <p class="kicker">3rd-Party Declarations · Part 3 of 3</p>
+      <h1>Confirm, submit, notify, and ship</h1>
+      <p class="sub">Parts 1 and 2 built a multi-row form that validates itself. This last leg gives the Submit click its consequences: a <strong>confirmation popup</strong>, a batch write to the <strong>3rd party inventory</strong> list with a full audit trail, an <strong>email to the IAM team</strong>, and a success screen that resets for the next declaration. Then you test end-to-end and publish. Every name, number and formula has a copy button.</p>
+      <div class="meta">
+        <span><b>1</b> confirmation popup</span>
+        <span><b>1</b> notification flow</span>
+        <span><b>1</b> big submit formula</span>
+        <span>then publish 🎉</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="sticky">
+  <div class="wrap">
+    <div class="progress"><i id="bar"></i></div>
+    <div class="progtext"><span id="progLabel">0 of 9 steps done</span><button id="reset" type="button">Reset</button></div>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <section class="block" id="intro">
+    <h2 class="sec">Where you're starting from</h2>
+    <div class="note tip"><b>Prerequisites — Parts 1 and 2 are done</b>The gallery form adds, edits and deletes rows with every keystroke mirrored into <code>colSystems</code>; validation blocks bad submissions with red borders and per-row messages. A fully valid Submit click already sets <code>gblShowConfirm</code> — it just has nothing to show yet. That's the first thing we fix.</div>
+    <div class="tldr"><b>Substitute your values</b>Wherever you see <code>&lt;YOUR-SITE-URL&gt;</code> or <code>&lt;IAM-DL-EMAIL&gt;</code>, substitute your own SharePoint site URL and the IAM distribution list address.</div>
+    <div class="note why"><b>Tap any chip to copy</b>Dark boxes have a <strong>Copy</strong> button. Every inline chip like <code class="cc">btnConfirmYes</code> is tap-to-copy — the ⧉ mark is the reminder. Paste, never retype.</div>
+  </section>
+
+  <section class="block" id="phase1">
+    <h2 class="sec">Phase 1 — The confirmation popup</h2>
+
+    <details class="step" id="c1" open>
+      <summary><span class="dot"></span><span class="num">C1</span><span class="stitle">Build the confirmation popup</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do">Six controls, inserted in this order so they stack correctly (later inserts sit on top). All six get the same <strong>Visible</strong> formula, so the whole popup appears and disappears as one.</p>
+        <ol class="steps2">
+          <li><strong>Insert</strong> → Rectangle → rename it <code class="cc">recOverlay</code>. This is the full-screen dimmer.</li>
+          <li><strong>Insert</strong> → Rectangle → rename it <code class="cc">recConfirmCard</code>. This is the white card.</li>
+          <li><strong>Insert</strong> → Text label → rename it <code class="cc">lblConfirmTitle</code>.</li>
+          <li><strong>Insert</strong> → Text label → rename it <code class="cc">lblConfirmMsg</code>.</li>
+          <li><strong>Insert</strong> → Button → rename it <code class="cc">btnConfirmYes</code> → set its Text to <code class="cc">"Submit"</code>.</li>
+          <li><strong>Insert</strong> → Button → rename it <code class="cc">btnConfirmNo</code> → set its Text to <code class="cc">"Cancel"</code>.</li>
+        </ol>
+        <p class="do">Size and place them with the Properties pane (right side):</p>
+        <dl class="props">
+          <div><dt>recOverlay</dt><dd>X <code>0</code> · Y <code>0</code> · Width <code>1366</code> · Height <code>768</code> · Fill <code>RGBA(0, 0, 0, .4)</code></dd></div>
+          <div><dt>recConfirmCard</dt><dd>X <code>433</code> · Y <code>234</code> · Width <code>500</code> · Height <code>300</code> · Fill <code>White</code></dd></div>
+          <div><dt>lblConfirmTitle</dt><dd>X <code>457</code> · Y <code>254</code> · Width <code>452</code> · Height <code>40</code> · bold, size <code>22</code></dd></div>
+          <div><dt>lblConfirmMsg</dt><dd>X <code>457</code> · Y <code>300</code> · Width <code>452</code> · Height <code>130</code></dd></div>
+          <div><dt>btnConfirmYes</dt><dd>X <code>693</code> · Y <code>460</code> · Width <code>216</code> · Height <code>48</code></dd></div>
+          <div><dt>btnConfirmNo</dt><dd>X <code>457</code> · Y <code>460</code> · Width <code>216</code> · Height <code>48</code></dd></div>
+        </dl>
+        <p class="do">Now the formulas. Select <strong>each of the six controls in turn</strong> → property dropdown → <strong>Visible</strong> → paste:</p>
+        <p class="fxlabel">all six popup controls · Visible</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>gblShowConfirm</code></div>
+        <p class="do">Select <code class="cc">lblConfirmTitle</code> → <strong>Text</strong> → paste:</p>
+        <p class="fxlabel">lblConfirmTitle · Text</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"Confirm submission"</code></div>
+        <p class="do">Select <code class="cc">lblConfirmMsg</code> → <strong>Text</strong> → paste:</p>
+        <p class="fxlabel">lblConfirmMsg · Text</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"You are about to submit " &amp; CountRows(colSystems) &amp; " system record(s) to the 3rd party inventory. The IAM team will be notified by email. Do you want to proceed?"</code></div>
+        <p class="do">Select <code class="cc">btnConfirmNo</code> → <strong>OnSelect</strong> → paste:</p>
+        <p class="fxlabel">btnConfirmNo · OnSelect</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Set(gblShowConfirm, false)</code></div>
+        <div class="note why"><b>Why btnConfirmYes stays empty for now</b>Its OnSelect is the big submit formula — but that formula calls the notification flow, which doesn't exist yet. We build the flow first (C2–C4), then wire the button (C5). The requirement is exactly this popup: a confirmation message with a Submit and a Cancel button.</div>
+        <div class="note check"><b>Check before moving on</b>In Preview: fill the form validly and press Submit — the screen dims and the card appears with the correct record count in the message. Cancel closes it and the form is untouched. The Submit button on the card does nothing yet — expected.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+  </section>
+
+  <section class="block" id="phase2">
+    <h2 class="sec">Phase 2 — The notification flow</h2>
+
+    <details class="step" id="c2">
+      <summary><span class="dot"></span><span class="num">C2</span><span class="stitle">Create the flow and its four inputs</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do">The flow is built in Power Automate, in the <strong>same environment</strong> as your app.</p>
+        <ol class="steps2">
+          <li>Open <code class="cc">https://make.powerautomate.com</code> → check the environment picker (top right) matches the app's environment.</li>
+          <li><strong>Create</strong> (left rail) → <strong>Instant cloud flow</strong>.</li>
+          <li>Flow name: paste <code class="cc">SystemDeclarationNotify</code>. Choose the trigger <strong>PowerApps (V2)</strong> → <strong>Create</strong>.</li>
+          <li>Click the <strong>PowerApps (V2)</strong> trigger card → <strong>Add an input</strong> → <strong>Text</strong> → rename the input to <code class="cc">ResponderName</code>.</li>
+          <li><strong>Add an input</strong> → <strong>Text</strong> → <code class="cc">ResponderEmail</code>.</li>
+          <li><strong>Add an input</strong> → <strong>Text</strong> → <code class="cc">SubmissionDate</code>.</li>
+          <li><strong>Add an input</strong> → <strong>Text</strong> → <code class="cc">SystemCount</code>.</li>
+        </ol>
+        <div class="note warn"><b>The input ORDER is the .Run() signature</b>Create the four inputs in exactly this order — <code>ResponderName</code>, <code>ResponderEmail</code>, <code>SubmissionDate</code>, <code>SystemCount</code>. When the app calls <code>SystemDeclarationNotify.Run(...)</code> in C5, the arguments are matched <em>by position</em>. All four are Text on purpose: the app pre-formats the date and count, which sidesteps timezone and locale conversion entirely.</div>
+        <div class="note check"><b>Check before moving on</b>The trigger card lists four inputs, top to bottom: ResponderName, ResponderEmail, SubmissionDate, SystemCount — all of type Text.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+
+    <details class="step" id="c3">
+      <summary><span class="dot"></span><span class="num">C3</span><span class="stitle">The email to the IAM team</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <ol class="steps2">
+          <li>Under the trigger: <strong>New step</strong> → search <code class="cc">Send an email (V2)</code> → pick the <strong>Office 365 Outlook</strong> action.</li>
+          <li><strong>To:</strong> your IAM distribution list — <code>&lt;IAM-DL-EMAIL&gt;</code>.</li>
+          <li><strong>Subject:</strong> paste exactly:</li>
+        </ol>
+        <p class="fxlabel">Send an email (V2) · Subject</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>New Third-Party Application Submission Received</code></div>
+        <p class="do"><strong>Body:</strong> click the <code class="cc">&lt;/&gt;</code> (code view) toggle in the body field's top-right, then paste this skeleton:</p>
+        <p class="fxlabel">Send an email (V2) · Body (HTML)</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>&lt;p&gt;A new third-party application declaration has been submitted.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;b&gt;Responder:&lt;/b&gt; &lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;Submission date:&lt;/b&gt; &lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;Number of declared systems:&lt;/b&gt; &lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;a href="&lt;YOUR-SITE-URL&gt;/Lists/3rd%20party%20inventory/AllItems.aspx"&gt;Open the 3rd party inventory list&lt;/a&gt;&lt;/p&gt;</code></div>
+        <ol class="steps2">
+          <li>Place the cursor after <strong>Responder:</strong> (before the closing <code>&lt;/li&gt;</code>) → open <strong>Dynamic content</strong> → insert the <code class="cc">ResponderName</code> chip.</li>
+          <li>Same for <strong>Submission date:</strong> → insert <code class="cc">SubmissionDate</code>.</li>
+          <li>Same for <strong>Number of declared systems:</strong> → insert <code class="cc">SystemCount</code>.</li>
+          <li>Fix the link: replace <code>&lt;YOUR-SITE-URL&gt;</code> with your real site URL.</li>
+          <li><strong>Save</strong> the flow.</li>
+        </ol>
+        <div class="note tip"><b>Optional: CC the responder</b>Show advanced options → CC → insert the <code>ResponderEmail</code> dynamic content chip. The submitter gets a copy of what IAM received — a nice audit courtesy, and it's why the app passes the email at all.</div>
+        <div class="note warn"><b>Never rename this flow later</b>The app will bind to the name <code>SystemDeclarationNotify</code>. Renaming the flow after C4 breaks <code>SystemDeclarationNotify.Run(...)</code> in the app — the fix is to remove and re-add the flow in the Power Automate pane. Name it right once, now, before it ever touches the app.</div>
+        <div class="note check"><b>Check before moving on</b>The flow shows: PowerApps (V2) trigger with 4 inputs → Send an email (V2) with To = the IAM DL, the exact subject, and a body containing three dynamic-content chips and the list link. Saved without errors.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+
+    <details class="step" id="c4">
+      <summary><span class="dot"></span><span class="num">C4</span><span class="stitle">Connect the flow to the app</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <ol class="steps2">
+          <li>Back in Power Apps Studio (your app open for editing).</li>
+          <li>Left rail → <strong>Power Automate</strong> (the flow icon) → <strong>Add flow</strong>.</li>
+          <li>Pick <code class="cc">SystemDeclarationNotify</code> from the list.</li>
+        </ol>
+        <div class="note check"><b>Check before moving on</b>Click into any formula bar and type <code>SystemDeclarationNotify.Run(</code> — IntelliSense autocompletes the flow name and hints four text arguments. Press Esc without saving the test-typing.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+  </section>
+
+  <section class="block" id="phase3">
+    <h2 class="sec">Phase 3 — Wire the submit</h2>
+
+    <details class="step" id="c5">
+      <summary><span class="dot"></span><span class="num">C5</span><span class="stitle">The submit formula — write, notify, succeed</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do">One paste. It writes every row of <code class="cc">colSystems</code> to the list, stamps the audit trail (responder name, email, date/time), calls the flow, and flips to the success screen. It reads <strong>only the collection</strong> — never control state — which is the whole point of the Part 1 architecture.</p>
+        <p class="do">Tree view → click <code class="cc">btnConfirmYes</code> → property dropdown → <strong>OnSelect</strong> → paste:</p>
+        <p class="fxlabel">btnConfirmYes · OnSelect</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Set(gblSubmitting, true);
+IfError(
+    ForAll(colSystems As row,
+        Patch('3rd party inventory', Defaults('3rd party inventory'),
+            {
+                'Application Name': row.AppName,
+                'Vendor/ Provider Name': row.Vendor,
+                'Business owner': row.BizOwner,
+                'Application Purpose': row.Purpose,
+                'IT Custodian': row.Custodian,
+                'Admin Accounts Used': row.AdminAccts,
+                'Permissions / Access levels': row.Permissions,
+                'Support / Vendor Contact Information': row.SupportContact,
+                'IAM Role': row.IAMRole,
+                'Access Link': row.AccessLink,
+                'Division ': row.Division,
+                Status: row.Status,
+                'Handover Status': row.Handover,
+                'Number of Accounts': row.NumAccts,
+                'Submission Date': Now(),
+                'Responder Name': User().FullName,
+                'Responder Email': User().Email
+            }
+        )
+    ),
+    Set(gblSubmitting, false);
+    Notify("Submission failed — please try again. " &amp; FirstError.Message, NotificationType.Error),
+    SystemDeclarationNotify.Run(User().FullName, User().Email, Text(Now(), "dd mmm yyyy hh:mm"), Text(CountRows(colSystems)));
+    Set(gblShowConfirm, false);
+    Set(gblShowErrors, false);
+    Set(gblSubmitting, false);
+    Set(gblShowSuccess, true)
+)</code></div>
+        <div class="note why"><b>How to paste the quirky column names</b>Four column names have traps baked in by the original list: <code>'Vendor/ Provider Name'</code> (space after the slash), <code>'Business owner'</code> (lowercase o), <code>'Permissions / Access levels'</code> (lowercase l), and <code>'Division '</code> — with a <strong>trailing space</strong>. The paste above already has them exactly right. If you ever retype one, accept IntelliSense's autocomplete — a hand-typed <code>'Division'</code> (no space) will not resolve.</div>
+        <div class="note warn"><b>Adapt to YOUR column types — the A1 worksheet moment</b>The formula above assumes the choice-like columns are <strong>text</strong> (the live list data suggests exactly that). Pull out the column worksheet you filled in at step A1 and adjust any line that differs:<br>· Column is <strong>Choice</strong> → wrap in a record: <code>'IAM Role': {Value: row.IAMRole}</code> — same treatment for <code>'Division '</code>, <code>Status</code>, <code>'Handover Status'</code>.<br>· <code>Number of Accounts</code> is a <strong>Number</strong> column → <code>'Number of Accounts': Value(row.NumAccts)</code>.<br>· <code>Submission Date</code> is <strong>Text</strong> → <code>'Submission Date': Text(Now(), "yyyy-mm-dd hh:mm")</code>.<br>Guessed wrong? The formula bar flags that exact line with "expected record value, found text" (or the reverse). Fix just that line per the rules above.</div>
+        <div class="note tip"><b>IfError needs its switch on</b>This formula relies on <strong>Formula-level error management</strong>, which you enabled in A2 (Settings → Upcoming features). If <code>IfError</code> shows as an unknown function, flip that switch on and re-paste.</div>
+        <div class="note check"><b>Check before moving on</b>No red in the formula bar after your worksheet adjustments. The App checker (stethoscope icon) reports no formula errors on <code>btnConfirmYes</code>. Don't test-click yet — the success screen it flips to doesn't exist until C6.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+
+    <details class="step" id="c6">
+      <summary><span class="dot"></span><span class="num">C6</span><span class="stitle">The success screen and the reset</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do">Same recipe as C1 — five controls, inserted in order, all sharing one Visible flag:</p>
+        <ol class="steps2">
+          <li><strong>Insert</strong> → Rectangle → <code class="cc">recSuccessOverlay</code> — X <code class="cc">0</code> · Y <code class="cc">0</code> · Width <code class="cc">1366</code> · Height <code class="cc">768</code> · Fill <code>RGBA(0, 0, 0, .4)</code>.</li>
+          <li><strong>Insert</strong> → Rectangle → <code class="cc">recSuccessCard</code> — X <code class="cc">433</code> · Y <code class="cc">234</code> · Width <code class="cc">500</code> · Height <code class="cc">300</code> · Fill White.</li>
+          <li><strong>Insert</strong> → Text label → <code class="cc">lblSuccessTitle</code> — X <code class="cc">457</code> · Y <code class="cc">254</code> · Width <code class="cc">452</code> · Height <code class="cc">40</code>, bold, size 22.</li>
+          <li><strong>Insert</strong> → Text label → <code class="cc">lblSuccessMsg</code> — X <code class="cc">457</code> · Y <code class="cc">300</code> · Width <code class="cc">452</code> · Height <code class="cc">130</code>.</li>
+          <li><strong>Insert</strong> → Button → <code class="cc">btnNewDeclaration</code> — X <code class="cc">457</code> · Y <code class="cc">460</code> · Width <code class="cc">452</code> · Height <code class="cc">48</code> · Text <code class="cc">"Start a new declaration"</code>.</li>
+        </ol>
+        <p class="do">Select <strong>each of the five controls</strong> → <strong>Visible</strong> → paste:</p>
+        <p class="fxlabel">all five success controls · Visible</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>gblShowSuccess</code></div>
+        <p class="do">Select <code class="cc">lblSuccessTitle</code> → <strong>Text</strong> → paste:</p>
+        <p class="fxlabel">lblSuccessTitle · Text</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"Declaration submitted 🎉"</code></div>
+        <p class="do">Select <code class="cc">lblSuccessMsg</code> → <strong>Text</strong> → paste:</p>
+        <p class="fxlabel">lblSuccessMsg · Text</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"Your system records have been added to the 3rd party inventory and the IAM team has been notified. You can close the app or start a new declaration."</code></div>
+        <p class="do">Select <code class="cc">btnNewDeclaration</code> → <strong>OnSelect</strong> → paste:</p>
+        <p class="fxlabel">btnNewDeclaration · OnSelect</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Set(gblNextSeq, 2);
+ClearCollect(colSystems, {RowID: GUID(), SeqNo: 1, AppName: "", Vendor: "", BizOwner: "", Purpose: "", Custodian: "", AdminAccts: "", Permissions: "", SupportContact: "", IAMRole: "", AccessLink: "", Division: "", Status: "", Handover: "", NumAccts: ""});
+Set(gblShowSuccess, false)</code></div>
+        <div class="note why"><b>Why the reset mints a fresh GUID</b>Re-seeding <code>colSystems</code> with a brand-new <code>RowID</code> forces the gallery to build brand-new items, so no leftover control state from the previous declaration can bleed into the next one. No <code>Reset()</code> calls needed — the collection is, as always, the single source of truth.</div>
+        <div class="note check"><b>Check before moving on</b>Both overlays are invisible in the editor's default state (their flags are false). Temporarily set <code>gblShowSuccess</code> to true via the formula bar preview if you want to eyeball the layout — the card reads cleanly and the button spans under the message.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+  </section>
+
+  <section class="block" id="phase4">
+    <h2 class="sec">Phase 4 — Prove it, then ship it</h2>
+
+    <details class="step" id="c7">
+      <summary><span class="dot"></span><span class="num">C7</span><span class="stitle">Verify the audit trail with one real record</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <ol class="steps2">
+          <li>Preview the app (F5). Fill the single row with obviously-test values (e.g. Application Name <code class="cc">ZZ Test App — delete me</code>), pick any dropdown values, a valid URL and a number.</li>
+          <li>Submit → the popup appears → <strong>Submit</strong>.</li>
+          <li>The success screen appears. Leave the app and open the <code class="cc">3rd party inventory</code> list in the browser.</li>
+        </ol>
+        <div class="note check"><b>Check before moving on</b>The newest list item holds your test values in the right columns, and the audit trio is stamped: <code>Responder Name</code> is your full name, <code>Responder Email</code> is your address, <code>Submission Date</code> is just now. SharePoint's built-in <code>Created By</code> / <code>Created</code> corroborate them. The IAM mailbox (or your CC copy) received the notification. Delete the test item when you're done looking.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+
+    <details class="step" id="c8">
+      <summary><span class="dot"></span><span class="num">C8</span><span class="stitle">The end-to-end test script</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do">The full journey, exactly as a business user will drive it. F5 from the top:</p>
+        <ul>
+          <li><strong>Add System</strong> twice → three rows. Fill all three completely (distinct app names — Test A, Test B, Test C).</li>
+          <li>Submit → popup says <strong>"3 system record(s)"</strong> → press <strong>Cancel</strong> → popup closes, all three rows intact.</li>
+          <li>Submit again → <strong>Submit</strong> on the popup → success screen appears.</li>
+          <li>In SharePoint: three new items, values in the right columns — spot-check that each row's division landed in the <code>Division </code> column (the trailing-space one) and the number in <code>Number of Accounts</code>.</li>
+          <li>The IAM email arrived: subject exact, responder name right, <strong>Number of declared systems: 3</strong>, and the link opens the list.</li>
+          <li>Back in the app: <strong>Start a new declaration</strong> → one blank row, count label says 1, no red anywhere.</li>
+          <li>Clean up the three test items in SharePoint.</li>
+        </ul>
+        <div class="note check"><b>Check before moving on</b>Every bullet passed — including Cancel preserving the rows and the reset landing on exactly one clean blank row.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+
+    <details class="step" id="c9">
+      <summary><span class="dot"></span><span class="num">C9</span><span class="stitle">The victory lap — publish and share</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <ol class="steps2">
+          <li><strong>File</strong> → <strong>Save</strong> → <strong>Publish</strong> → <strong>Publish this version</strong>.</li>
+          <li>Back on the app's detail page (or File → Share): <strong>Share</strong> the app with your users or a security group.</li>
+          <li>Give the same people <strong>Contribute</strong> permission on the <code class="cc">3rd party inventory</code> list — the app writes as the signed-in user, so without list rights their submits fail.</li>
+          <li>Flow check: in Power Automate, open <code class="cc">SystemDeclarationNotify</code> → <strong>Details</strong> → confirm its connections are healthy and, under <strong>Run only users</strong>, that app users are allowed to run it (adding the flow to the app normally handles this — verify once).</li>
+        </ol>
+        <div class="note tip"><b>Blue underlines are fine</b>The App checker may show blue delegation hints on formulas that count or filter <code>colSystems</code>. Every one of those reads a local collection, not SharePoint — delegation doesn't apply, nothing is truncated, nothing blocks publishing.</div>
+        <div class="note check"><b>Done</b>Published, shared, permissions in place, notification flowing. Business users can now declare their third-party systems in batches, IAM gets a mail per submission, and every record carries its responder and timestamp. The build is complete. 🏁</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+  </section>
+
+  <footer>
+    Part 3 — the last leg: one popup, one flow, one big submit formula, two test scripts, then publish.<br>
+    The series: &nbsp;<a href="index.html">Series home</a> &nbsp;·&nbsp; <a href="part1.html">Part 1 — Foundations</a> &nbsp;·&nbsp; <a href="part2.html">Part 2 — Validation</a> &nbsp;·&nbsp; <strong>Part 3 — Submit &amp; ship</strong>
+  </footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var mem={};
+  var store={
+    get:function(k){try{return localStorage.getItem(k);}catch(e){return (k in mem)?mem[k]:null;}},
+    set:function(k,v){try{localStorage.setItem(k,v);}catch(e){mem[k]=v;}},
+    del:function(k){try{localStorage.removeItem(k);}catch(e){delete mem[k];}}
+  };
+  var KEY="bbk3pDeclareP3_v1";
+
+  function fallbackCopy(t){var ta=document.createElement("textarea");ta.value=t;ta.setAttribute("readonly","");ta.style.position="fixed";ta.style.top="-1000px";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");}catch(e){}document.body.removeChild(ta);}
+  function copyText(text,onDone){
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(onDone,function(){fallbackCopy(text);onDone();});}
+    else{fallbackCopy(text);onDone();}
+  }
+  document.querySelectorAll(".fx .copy").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      var code=btn.parentElement.querySelector("code");
+      copyText(code?code.textContent:"",function(){
+        btn.classList.add("copied");btn.textContent="✓";
+        setTimeout(function(){btn.classList.remove("copied");btn.textContent="Copy";},1300);
+      });
+    });
+  });
+  document.querySelectorAll("code.cc").forEach(function(chip){
+    chip.setAttribute("title","Tap to copy");
+    chip.addEventListener("click",function(){
+      copyText(chip.textContent,function(){
+        chip.classList.add("copied");
+        setTimeout(function(){chip.classList.remove("copied");},1100);
+      });
+    });
+  });
+
+  var steps=Array.prototype.slice.call(document.querySelectorAll("details.step"));
+  var total=steps.length;
+  var bar=document.getElementById("bar");
+  var label=document.getElementById("progLabel");
+  function loadDone(){var raw=store.get(KEY);if(!raw)return {};try{return JSON.parse(raw)||{};}catch(e){return {};}}
+  function saveDone(obj){store.set(KEY,JSON.stringify(obj));}
+  var doneMap=loadDone();
+  function refreshProgress(){
+    var n=0;
+    steps.forEach(function(d){if(d.classList.contains("isdone"))n++;});
+    bar.style.width=(total?Math.round(n/total*100):0)+"%";
+    label.textContent=n+" of "+total+" steps done";
+  }
+  steps.forEach(function(d){
+    if(doneMap[d.id])d.classList.add("isdone");
+    var btn=d.querySelector(".done");
+    function syncBtn(){btn.textContent=d.classList.contains("isdone")?"✓ Done — tap to undo":"Mark step done";}
+    syncBtn();
+    btn.addEventListener("click",function(){d.classList.toggle("isdone");doneMap[d.id]=d.classList.contains("isdone");saveDone(doneMap);syncBtn();refreshProgress();});
+  });
+  refreshProgress();
+  document.getElementById("reset").addEventListener("click",function(){
+    steps.forEach(function(d){d.classList.remove("isdone");d.querySelector(".done").textContent="Mark step done";});
+    doneMap={};store.del(KEY);refreshProgress();
+  });
+})();
+</script>
+</body>
+</html>

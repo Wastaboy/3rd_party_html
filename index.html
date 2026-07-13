@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F3B6E">
+<title>Third-Party Application Declaration — Build Guide Series</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1F3B6E; --navy-deep:#142a52;
+    --amber:#E08A1E; --amber-soft:#fbe8cd;
+    --paper:#F4F5F8; --card:#fff; --line:#e3e6ee; --line-soft:#eef1f7;
+    --text:#1b2436; --muted:#5b6678;
+    --ok:#1f8a52; --ok-soft:#e3f3ea;
+    --radius:14px; --sh-sm:0 1px 2px rgba(16,31,61,.04);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--paper);color:var(--text);font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:24px;line-height:1.62;-webkit-font-smoothing:antialiased;padding-bottom:64px}
+  .wrap{max-width:760px;margin:0 auto;padding:0 16px}
+
+  header.mast{background:radial-gradient(120% 140% at 100% 0%, rgba(224,138,30,.22), transparent 55%),linear-gradient(160deg,var(--navy) 0%,var(--navy-deep) 100%);color:#fff;padding:28px 0 26px;border-bottom:3px solid var(--amber)}
+  .mast-inner{display:flex;gap:18px;align-items:center}
+  .brandmark{flex:none;width:60px;height:60px;border-radius:15px;background:linear-gradient(160deg,#274982,#1a345f);border:1px solid rgba(255,255,255,.18);box-shadow:0 8px 22px -10px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.12);display:grid;place-items:center}
+  .kicker{font-family:"IBM Plex Mono",monospace;font-size:16px;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);font-weight:500;margin:0 0 10px}
+  .mast h1{font-family:"IBM Plex Serif",Georgia,serif;font-weight:600;font-size:42px;line-height:1.12;margin:0 0 8px;letter-spacing:-.01em}
+  .mast p.sub{margin:0;color:#c7d2e8;font-size:21px;max-width:48ch}
+  @media(max-width:480px){ .brandmark{width:50px;height:50px} .mast h1{font-size:34px} }
+
+  main{padding-top:10px}
+  p.lead{color:var(--muted);font-size:21px;margin:22px 0 6px}
+
+  a.part{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:12px 0;text-decoration:none;color:inherit;box-shadow:var(--sh-sm)}
+  a.part:hover{border-color:#d4dae8;box-shadow:0 6px 24px -12px rgba(16,31,61,.28)}
+  a.part .num{flex:none;width:44px;height:44px;border-radius:11px;background:var(--navy);color:#fff;display:grid;place-items:center;font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:20px}
+  a.part .t{font-weight:600;font-size:23px;line-height:1.3;color:var(--navy);margin:2px 0 4px}
+  a.part .d{font-size:19px;color:var(--muted);margin:0}
+  a.part .steps{font-family:"IBM Plex Mono",monospace;font-size:15px;color:var(--muted);margin-top:6px;display:block}
+
+  .note{border-radius:11px;padding:12px 14px;margin:18px 0;font-size:20px;border:1px solid;line-height:1.55}
+  .note b{display:block;font-size:17px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px;font-family:"IBM Plex Mono",monospace}
+  .note.tip{background:var(--ok-soft);border-color:#c9e6d6;color:#1c5236}.note.tip b{color:var(--ok)}
+  .note code{font-family:"IBM Plex Mono",monospace;font-size:17px;background:rgba(0,0,0,.05);padding:1px 5px;border-radius:5px}
+
+  footer{margin:34px 0 10px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:18px;text-align:center;line-height:1.6}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap mast-inner">
+    <div class="brandmark" aria-hidden="true">
+      <svg viewBox="0 0 48 48" width="46" height="46" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="16" stroke="rgba(255,255,255,.5)" stroke-width="1.8"/>
+        <path d="M16 24l6 6 11-13" stroke="rgba(224,138,30,.95)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="mast-copy">
+      <p class="kicker">3rd-Party Declarations · Build runbook</p>
+      <h1>Third-Party Application Declaration</h1>
+      <p class="sub">A three-part, step-by-step guide to building the declaration solution in Power Apps: a multi-record form writing to the <strong>3rd party inventory</strong> SharePoint list, with validation, a confirmation popup, and an IAM email notification via Power Automate.</p>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <p class="lead">Work through the parts in order — each ends with a checkpoint that proves the build is ready for the next.</p>
+
+  <a class="part" href="part1.html">
+    <span class="num">1</span>
+    <span>
+      <span class="t">Foundations: the list, the app, and the multi-row form</span>
+      <p class="d">Verify the SharePoint list, create the app, and build the add/delete multi-row form on the write-back architecture — ending with a smoke test that proves rows never lose data.</p>
+      <span class="steps">Steps A1–A10</span>
+    </span>
+  </a>
+
+  <a class="part" href="part2.html">
+    <span class="num">2</span>
+    <span>
+      <span class="t">Guidance, validation, and error messaging</span>
+      <p class="d">Placeholder help text on every field, the mandatory-field validation gate, red-border highlighting, and per-row error messages that clear live as users fix them.</p>
+      <span class="steps">Steps B1–B9</span>
+    </span>
+  </a>
+
+  <a class="part" href="part3.html">
+    <span class="num">3</span>
+    <span>
+      <span class="t">Confirm, submit, notify, and ship</span>
+      <p class="d">The confirmation popup, the one-transaction submit into SharePoint with audit stamping, the IAM notification flow, an end-to-end test script, and publishing.</p>
+      <span class="steps">Steps C1–C9</span>
+    </span>
+  </a>
+
+  <div class="note tip"><b>Before you start</b>Wherever a step shows <code>&lt;YOUR-SITE-URL&gt;</code> or <code>&lt;IAM-DL-EMAIL&gt;</code>, substitute your own SharePoint site URL and the IAM distribution list address. Each part tracks its own progress on this device — you can close the page and pick up where you left off.</div>
+
+  <footer>
+    Third-Party Application Declaration — build guide series · Part 1 → Part 2 → Part 3
+  </footer>
+</main>
+</body>
+</html>

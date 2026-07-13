@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F3B6E">
+<title>Part 2 — Guidance, validation, and error messaging</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1F3B6E; --navy-deep:#142a52; --ink:#0f1f3d;
+    --amber:#E08A1E; --amber-soft:#fbe8cd;
+    --paper:#F4F5F8; --card:#fff; --line:#e3e6ee; --line-soft:#eef1f7;
+    --navy-tint:#eef0f6; --faint:#97a1b4;
+    --text:#1b2436; --muted:#5b6678;
+    --code-bg:#0f1f3d; --code-text:#e9edf7;
+    --ok:#1f8a52; --ok-soft:#e3f3ea;
+    --green:#228b57; --red:#c83737; --gray:#788291;
+    --radius:14px; --tap:46px; --sh-sm:0 1px 2px rgba(16,31,61,.04);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--text);font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:24px;line-height:1.62;-webkit-font-smoothing:antialiased;padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+  .wrap{max-width:760px;margin:0 auto;padding:0 16px;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+
+  header.mast{background:radial-gradient(120% 140% at 100% 0%, rgba(224,138,30,.22), transparent 55%),linear-gradient(160deg,var(--navy) 0%,var(--navy-deep) 100%);color:#fff;padding:calc(28px + env(safe-area-inset-top)) 0 26px;border-bottom:3px solid var(--amber)}
+  .mast-inner{display:flex;gap:18px;align-items:center}
+  .mast-copy{flex:1;min-width:0}
+  .brandmark{flex:none;width:60px;height:60px;border-radius:15px;background:linear-gradient(160deg,#274982,#1a345f);border:1px solid rgba(255,255,255,.18);box-shadow:0 8px 22px -10px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.12);display:grid;place-items:center}
+  .kicker{font-family:"IBM Plex Mono",monospace;font-size:16px;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);font-weight:500;margin:0 0 10px}
+  .mast h1{font-family:"IBM Plex Serif",Georgia,serif;font-weight:600;font-size:42px;line-height:1.12;margin:0 0 8px;letter-spacing:-.01em}
+  .mast p.sub{margin:0;color:#c7d2e8;font-size:21px;max-width:48ch}
+  .mast .meta{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px}
+  .mast .meta span{font-family:"IBM Plex Mono",monospace;font-size:16px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);padding:5px 9px;border-radius:999px;color:#dde6f5}
+  .mast .meta span b{color:#fff;font-weight:600}
+  @media(max-width:480px){ .brandmark{width:50px;height:50px} .mast h1{font-size:34px} }
+
+  .sticky{position:sticky;top:0;z-index:40;background:rgba(244,245,248,.86);backdrop-filter:saturate(180%) blur(12px);-webkit-backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+  .progress{height:5px;background:var(--line);overflow:hidden}
+  .progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--navy),var(--amber));transition:width .35s ease}
+  .progtext{font-family:"IBM Plex Mono",monospace;font-size:15px;color:var(--muted);padding:6px 0 8px;display:flex;justify-content:space-between;align-items:center}
+  .progtext button{background:none;border:none;color:var(--navy);font-family:inherit;font-size:15px;cursor:pointer;text-decoration:underline;padding:4px}
+
+  section.block{margin:26px 0}
+  section.block > h2.sec{font-family:"IBM Plex Serif",serif;font-size:29px;font-weight:600;color:var(--navy);margin:0 0 4px;letter-spacing:-.01em;scroll-margin-top:120px}
+  section.block > p.lead{margin:0 0 14px;color:var(--muted);font-size:21px}
+
+  .tldr{background:#fffdf8;border:1px dashed #ecd6ad;border-radius:12px;padding:13px 15px;margin:0 0 15px;font-size:20px}
+  .tldr b{display:block;font-family:"IBM Plex Mono",monospace;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:#a4651a;margin-bottom:4px}
+
+  details.step{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin:12px 0;overflow:hidden;scroll-margin-top:118px;box-shadow:var(--sh-sm)}
+  details.step[open]{box-shadow:0 6px 24px -12px rgba(16,31,61,.28);border-color:#d4dae8}
+  summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:15px 16px;min-height:var(--tap);user-select:none;-webkit-tap-highlight-color:transparent}
+  summary::-webkit-details-marker{display:none}
+  summary .num{flex:none;min-width:30px;height:30px;padding:0 5px;border-radius:9px;background:var(--navy);color:#fff;display:grid;place-items:center;font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:18px}
+  details.isdone summary .num{background:var(--ok)}
+  summary .stitle{flex:1;font-weight:600;font-size:22px;line-height:1.3}
+  summary .chev{flex:none;color:var(--muted);transition:transform .2s ease}
+  details[open] summary .chev{transform:rotate(90deg)}
+  summary .dot{flex:none;width:9px;height:9px;border-radius:50%;border:2px solid var(--line)}
+  details.isdone summary .dot{background:var(--ok);border-color:var(--ok)}
+  .body{padding:2px 16px 18px;border-top:1px solid var(--line-soft)}
+  .body > *:first-child{margin-top:14px}
+  .body p{margin:0 0 12px}
+  p.do{margin:0 0 12px}
+  .body ul,.body ol{margin:0 0 12px;padding-left:22px}.body li{margin:0 0 8px}
+  ol.steps2{counter-reset:s2;list-style:none;padding-left:0}
+  ol.steps2 > li{position:relative;padding:2px 0 10px 40px;margin:0}
+  ol.steps2 > li::before{counter-increment:s2;content:counter(s2);position:absolute;left:0;top:0;width:28px;height:28px;border-radius:8px;background:var(--navy-tint);color:var(--navy);font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:16px;display:grid;place-items:center;border:1px solid #dbe3f5}
+
+  dl.props{margin:0 0 13px;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+  dl.props > div{display:grid;grid-template-columns:210px 1fr;border-top:1px solid var(--line-soft)}
+  dl.props > div:first-child{border-top:none}
+  dl.props dt{background:#f7f9fc;padding:9px 12px;font-family:"IBM Plex Mono",monospace;font-size:18px;color:var(--navy);font-weight:500;border-right:1px solid var(--line-soft)}
+  dl.props dd{margin:0;padding:9px 12px;font-size:20px}
+  dl.props dd code{font-family:"IBM Plex Mono",monospace;font-size:18px;background:#eef1f7;padding:1px 5px;border-radius:5px}
+  @media(max-width:430px){dl.props > div{grid-template-columns:130px 1fr}dl.props dt{font-size:15px;padding:8px 9px}dl.props dd{font-size:18px;padding:8px 10px}}
+
+  .fxlabel{font-family:"IBM Plex Mono",monospace;font-size:16px;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;margin:0 0 5px;font-weight:500}
+  .fx{position:relative;margin:0 0 13px}
+  .fx code{display:block;background:var(--code-bg);color:var(--code-text);font-family:"IBM Plex Mono",monospace;font-size:18px;line-height:1.55;padding:14px 84px 14px 16px;border-radius:11px;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;border:1px solid #1c3360}
+  .fx .copy{position:absolute;top:8px;right:8px;height:34px;min-width:34px;padding:0 11px;border:none;border-radius:8px;background:rgba(224,138,30,.95);color:#1b1206;font-family:"IBM Plex Mono",monospace;font-size:17px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .fx .copy:active{transform:scale(.96)}
+  .fx .copy.copied{background:var(--ok);color:#fff}
+  .fxgroup{border:1px solid var(--line);border-radius:12px;padding:12px 13px 2px;margin:0 0 14px;background:#fcfdff}
+  .fxgroup > .gh{font-family:"IBM Plex Mono",monospace;font-size:17px;font-weight:600;color:var(--navy);margin:0 0 8px;display:flex;align-items:center;gap:8px}
+  .fxgroup > .gh::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--amber)}
+
+  .pane{background:#f4f6fb;border:1px solid #dbe2f1;border-left:4px solid var(--navy);border-radius:11px;padding:12px 14px;margin:0 0 13px}
+  .pane > .ph{font-family:"IBM Plex Mono",monospace;font-size:15px;letter-spacing:.05em;text-transform:uppercase;color:var(--navy);font-weight:600;margin:0 0 9px;display:flex;align-items:center;gap:7px}
+  .pane > .ph::before{content:"\2699";font-size:16px;line-height:1}
+  .pane ol,.pane ul{margin:0;padding-left:20px}.pane li{margin:0 0 6px;font-size:19px}
+  .pane p{margin:0 0 8px;font-size:19px}
+  .pane code{font-family:"IBM Plex Mono",monospace;font-size:17px;background:#e7ecf7;color:var(--navy);padding:1px 6px;border-radius:5px}
+
+  .note{border-radius:11px;padding:12px 14px;margin:0 0 13px;font-size:20px;border:1px solid;line-height:1.55}
+  .note b{display:block;font-size:17px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px;font-family:"IBM Plex Mono",monospace}
+  .note.why{background:#eef2fb;border-color:#d5def3;color:#23365e}.note.why b{color:var(--navy)}
+  .note.warn{background:#fbe8cd33;border-color:var(--amber-soft);color:#6b4410}.note.warn b{color:#a4651a}
+  .note.tip{background:var(--ok-soft);border-color:#c9e6d6;color:#1c5236}.note.tip b{color:var(--ok)}
+  .note.check{background:var(--ok-soft);border-color:#c9e6d6;color:#1c5236}.note.check b{color:var(--ok)}
+  .note.check b::before{content:"✅ ";}
+  .note code{font-family:"IBM Plex Mono",monospace;font-size:17px;background:rgba(0,0,0,.05);padding:1px 5px;border-radius:5px}
+
+  /* tap-to-copy chips: every code chip outside a dark .fx box is copyable */
+  code.cc{cursor:copy;position:relative;-webkit-tap-highlight-color:transparent}
+  code.cc::after{content:"⧉";font-size:.78em;margin-left:5px;opacity:.55}
+  code.cc.copied{background:var(--ok) !important;color:#fff !important}
+  code.cc.copied::after{content:"✓";opacity:1}
+
+  table.cols{width:100%;border-collapse:collapse;margin:0 0 13px;font-size:18px;background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+  table.cols th{background:#f7f9fc;font-family:"IBM Plex Mono",monospace;font-size:15px;letter-spacing:.04em;text-transform:uppercase;color:var(--navy);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+  table.cols td{padding:7px 10px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  table.cols tr:last-child td{border-bottom:none}
+
+  .done{-webkit-appearance:none;appearance:none;width:100%;min-height:var(--tap);margin-top:6px;border:1.5px solid var(--navy);border-radius:11px;background:#fff;color:var(--navy);font-family:inherit;font-size:21px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;gap:8px}
+  .done:active{background:var(--line-soft)}
+  details.isdone .done{background:var(--ok);border-color:var(--ok);color:#fff}
+
+  footer{margin:34px 0 10px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:18px;text-align:center;line-height:1.6}
+  footer a{color:var(--navy);font-weight:600}
+
+  @media (prefers-reduced-motion: reduce){*{transition:none !important;scroll-behavior:auto !important}}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap mast-inner">
+    <div class="brandmark" aria-hidden="true">
+      <svg viewBox="0 0 48 48" width="46" height="46" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="16" stroke="rgba(255,255,255,.5)" stroke-width="1.8"/>
+        <path d="M16 24l6 6 11-13" stroke="rgba(224,138,30,.95)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="mast-copy">
+      <p class="kicker">3rd-Party Declarations · Part 2 of 3</p>
+      <h1>Guidance, validation, and error messaging</h1>
+      <p class="sub">Part 1 left you with a working multi-row form. This part makes it self-explanatory and bullet-proof: placeholder hints on every field, the required-field convention, a submit gate that blocks incomplete declarations, and error messages that name exactly what's missing. <strong>Every name and formula has a copy button</strong> — paste, never retype.</p>
+      <div class="meta">
+        <span><b>9</b> steps</span>
+        <span><b>10</b> hint texts</span>
+        <span>validation gate</span>
+        <span>error UX</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="sticky">
+  <div class="wrap">
+    <div class="progress"><i id="bar"></i></div>
+    <div class="progtext"><span id="progLabel">0 of 9 steps done</span><button id="reset" type="button">Reset</button></div>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <section class="block" id="intro">
+    <h2 class="sec">Before you start</h2>
+    <div class="tldr"><b>Prerequisite</b>Part 1 is complete: your app has the multi-row gallery <code class="cc">galSystems</code> with all 14 fields writing back into <code class="cc">colSystems</code>, plus the <code class="cc">btnAddSystem</code> / <code class="cc">btnDeleteRow</code> / <code class="cc">lblSystemCount</code> wiring. If any of that is missing, finish Part 1 first. (Wherever a guide page shows <code>&lt;YOUR-SITE-URL&gt;</code> or <code>&lt;IAM-DL-EMAIL&gt;</code>, substitute your own values — this part happens to need neither.)</div>
+    <div class="note tip"><b>The one rule from Part 1 still runs everything</b>Validation never looks at input controls — it reads only <code>colSystems</code>, which the <code>OnChange</code> write-back keeps current on every edit. That's why every formula on this page is a plain expression over the collection: no gallery state, no surprises.</div>
+    <div class="note why"><b>Tap any chip to copy</b>Dark boxes have a <strong>Copy</strong> button. Every inline chip like <code class="cc">txtAppName</code> is tap-to-copy — the ⧉ mark is the reminder. Paste, never retype.</div>
+  </section>
+
+  <section class="block" id="phase-guidance">
+    <h2 class="sec">Guidance — every field explains itself</h2>
+
+    <details class="step" id="b1" open>
+      <summary><span class="dot"></span><span class="num">B1</span><span class="stitle">Hint text on all ten text inputs</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do">Ten pastes, one per input — the grey guidance a user sees in an empty field. Same motion each time: <strong>Tree view</strong> → expand <code class="cc">galSystems</code> → click the input → property dropdown (top-left, next to the <code class="cc">fx</code> bar) → <strong>HintText</strong> → <strong>Ctrl+A</strong> → paste (with the quotes).</p>
+        <p class="fxlabel">txtAppName · HintText</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"Enter the system/application name"</code></div>
+        <p class="fxlabel">txtVendor · HintText</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"Enter the software vendor or service provider"</code></div>
+        <p class="fxlabel">txtOwner · HintText</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"Enter the business owner name"</code></div>
+        <p class="fxlabel">txtPurpose · HintText</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"Describe the business purpose of the application"</code></div>
+        <p class="fxlabel">txtCustodian · HintText</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"Enter the responsible IT contact"</code></div>
+        <p class="fxlabel">txtAdminAccts · HintText</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"List administrator accounts used to manage the system"</code></div>
+        <p class="fxlabel">txtPermissions · HintText</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"Describe available roles and access levels"</code></div>
+        <p class="fxlabel">txtSupport · HintText</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"Enter support email, phone number, or contact details"</code></div>
+        <p class="fxlabel">txtAccessLink · HintText</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"Enter the application URL or access portal link"</code></div>
+        <p class="fxlabel">txtNumAccts · HintText</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"Enter the total number of active user accounts"</code></div>
+        <div class="note warn"><b>Seeing "Placeholder" instead of HintText?</b>You're on a <em>modern</em> control — this build uses classic controls throughout (property names like <code>HintText</code>, <code>Default</code>, <code>BorderColor</code>). Revisit Part 1's settings step and make sure "Modern controls and themes" is off, then re-insert the input as a classic one.</div>
+        <div class="note check"><b>Check before moving on</b>In Preview, a fresh empty row shows grey guidance in all ten text boxes; type one character in any of them and the hint disappears, delete it and the hint returns.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+
+    <details class="step" id="b2">
+      <summary><span class="dot"></span><span class="num">B2</span><span class="stitle">Dropdown tooltips — and the empty-until-chosen check</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do">Classic dropdowns have no placeholder, so their guidance rides on <strong>Tooltip</strong>. Four pastes: Tree view → expand <code class="cc">galSystems</code> → click the dropdown → property dropdown → <strong>Tooltip</strong> → Ctrl+A → paste:</p>
+        <p class="fxlabel">drpIAMRole · Tooltip</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"Select IAM involvement level"</code></div>
+        <p class="fxlabel">drpDivision · Tooltip</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"Select the applicable division"</code></div>
+        <p class="fxlabel">drpStatus · Tooltip</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"Select the application status"</code></div>
+        <p class="fxlabel">drpHandover · Tooltip</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"Select the handover status"</code></div>
+        <p class="do">While you're here, confirm each of the four dropdowns still has <strong>AllowEmptySelection</strong> set to <code class="cc">true</code> (from Part 1).</p>
+        <div class="note why"><b>Why AllowEmptySelection matters so much</b>Without it, a classic dropdown auto-selects its first item — every new row would arrive with "Manage" pre-chosen, and the mandatory-field validation you're about to build could never catch an untouched dropdown. Empty-until-chosen is what makes "required" real.</div>
+        <div class="note check"><b>Check before moving on</b>In Preview: hovering each dropdown shows its tooltip, and a freshly added row (＋ Add System) shows all four dropdowns <em>blank</em> — nothing pre-selected.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+
+    <details class="step" id="b3">
+      <summary><span class="dot"></span><span class="num">B3</span><span class="stitle">Mark every field required</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do">All 14 fields are mandatory, so all 14 labels say so. The first one, done together: Tree view → expand <code class="cc">galSystems</code> → click <code class="cc">lblAppName</code> → property dropdown → <strong>Text</strong> → Ctrl+A → paste:</p>
+        <p class="fxlabel">lblAppName · Text</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>"Application Name *"</code></div>
+        <p class="do">Now the other 13, same motion — each chip is the full Text value (tap to copy, quotes included):</p>
+        <ol class="steps2">
+          <li><code class="cc">lblVendor</code> → <code class="cc">"Vendor/Provider Name *"</code></li>
+          <li><code class="cc">lblOwner</code> → <code class="cc">"Business Owner *"</code></li>
+          <li><code class="cc">lblPurpose</code> → <code class="cc">"Application Purpose *"</code></li>
+          <li><code class="cc">lblCustodian</code> → <code class="cc">"IT Custodian *"</code></li>
+          <li><code class="cc">lblAdminAccts</code> → <code class="cc">"Admin Accounts Used *"</code></li>
+          <li><code class="cc">lblPermissions</code> → <code class="cc">"Permissions / Access Levels *"</code></li>
+          <li><code class="cc">lblSupport</code> → <code class="cc">"Support / Vendor Contact *"</code></li>
+          <li><code class="cc">lblIAMRole</code> → <code class="cc">"IAM Role *"</code></li>
+          <li><code class="cc">lblAccessLink</code> → <code class="cc">"Access Link *"</code></li>
+          <li><code class="cc">lblDivision</code> → <code class="cc">"Division *"</code></li>
+          <li><code class="cc">lblStatus</code> → <code class="cc">"Status *"</code></li>
+          <li><code class="cc">lblHandover</code> → <code class="cc">"Handover Status *"</code></li>
+          <li><code class="cc">lblNumAccts</code> → <code class="cc">"Number of Accounts *"</code></li>
+        </ol>
+        <div class="note tip"><b>Want the asterisk in brand red?</b>A classic label is single-colour, so the star inherits the label's ink. That's fine — the red arrives where it counts, on the error borders and messages you build in B6–B8. Skip the temptation to stack 14 extra one-character labels.</div>
+        <div class="note check"><b>Check before moving on</b>Every field label in the row card ends with <code>*</code> — count 14 in one row, and the layout hasn't wrapped or clipped anywhere.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+  </section>
+
+  <section class="block" id="phase-validation">
+    <h2 class="sec">Validation — the gate and the messages</h2>
+
+    <details class="step" id="b4">
+      <summary><span class="dot"></span><span class="num">B4</span><span class="stitle">The Submit button and the form-level error label</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do"><strong>a) The button.</strong> Click <code class="cc">scrMain</code> in the Tree view (so the button lands on the screen, not inside the gallery), then <strong>Insert → Button</strong>. Double-click its name in the Tree view and paste <code class="cc">btnSubmit</code>. Sit it at the right end of your footer bar from Part 1, next to <code class="cc">btnAddSystem</code> — X <code class="cc">1160</code> · Y <code class="cc">712</code> · Width <code class="cc">180</code> · Height <code class="cc">44</code> (nudge a few pixels to sit tidily in <code class="cc">recFooter</code>).</p>
+        <dl class="props">
+          <div><dt>Text</dt><dd><code class="cc">"Submit Declaration"</code></dd></div>
+          <div><dt>Fill</dt><dd><code class="cc">gblColorBrand</code></dd></div>
+          <div><dt>Color</dt><dd><code class="cc">Color.White</code></dd></div>
+        </dl>
+        <p class="do">Property dropdown → <strong>DisplayMode</strong> → Ctrl+A → paste:</p>
+        <p class="fxlabel">btnSubmit · DisplayMode</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>If(CountRows(colSystems) = 0 || gblSubmitting, DisplayMode.Disabled, DisplayMode.Edit)</code></div>
+        <p class="do"><strong>b) The label.</strong> With <code class="cc">scrMain</code> selected again, <strong>Insert → Text label</strong>. Rename it <code class="cc">lblFormError</code>. Place it in the footer to the left of the button — X <code class="cc">500</code> · Y <code class="cc">718</code> · Width <code class="cc">640</code> · Height <code class="cc">32</code>.</p>
+        <dl class="props">
+          <div><dt>Color</dt><dd><code class="cc">Color.Red</code></dd></div>
+          <div><dt>Text</dt><dd><code class="cc">""</code> — for now; B8 wires the real formula</dd></div>
+        </dl>
+        <div class="note why"><b>Why the DisplayMode guard</b>An empty declaration (zero rows) has nothing to submit, and <code>gblSubmitting</code> will lock the button during the SharePoint write in Part 3 — no double-clicks, no duplicate records.</div>
+        <div class="note check"><b>Check before moving on</b>With one row in the gallery the button shows solid brand red and is clickable; delete the last remaining row with <code>Delete Row</code> → the button greys out; press ＋ Add System and it wakes up again.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+
+    <details class="step" id="b5">
+      <summary><span class="dot"></span><span class="num">B5</span><span class="stitle">The validation gate on Submit</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do">One paste — the whole gate. Tree view → click <code class="cc">btnSubmit</code> → property dropdown → <strong>OnSelect</strong> → Ctrl+A → paste:</p>
+        <p class="fxlabel">btnSubmit · OnSelect</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>Set(gblShowErrors, true);
+If(
+    CountRows(colSystems) &gt; 0 &amp;&amp; CountRows(Filter(colSystems, IsBlank(AppName) || IsBlank(Vendor) || IsBlank(BizOwner) || IsBlank(Purpose) || IsBlank(Custodian) || IsBlank(AdminAccts) || IsBlank(Permissions) || IsBlank(SupportContact) || IsBlank(IAMRole) || IsBlank(Division) || IsBlank(Status) || IsBlank(Handover) || IsBlank(AccessLink) || !IsMatch(AccessLink, "^(https?://)?([\w\-]+\.)+[\w\-]+(/\S*)?$") || IsBlank(NumAccts) || !IsMatch(NumAccts, "^\d+$"))) = 0,
+    Set(gblShowConfirm, true)
+)</code></div>
+        <div class="note why"><b>How the gate reads</b>First it switches error display on (<code>gblShowErrors</code> — the red borders and messages of B6–B8 key off it). Then it counts invalid rows: a row fails if <em>any</em> of the 14 fields is blank, if the Access Link isn't URL-shaped, or if Number of Accounts isn't a whole number. Only a declaration with <strong>zero</strong> invalid rows sets <code>gblShowConfirm</code> — the confirmation popup you build in Part 3.</div>
+        <div class="note warn"><b>The URL pattern must stay a literal</b><code>IsMatch</code> only accepts a pattern typed directly into the formula — never move the regex into a variable "to tidy up"; it will stop compiling. The pattern is deliberately lenient: real inventory entries include bare domains like <code class="cc">stc.com.bh</code>, and those should pass.</div>
+        <div class="note tip"><b>A valid click does nothing visible yet — that's expected</b><code>gblShowConfirm</code> flips to true but no popup exists until Part 3. Nothing is broken.</div>
+        <div class="note check"><b>Check before moving on</b>In Preview with an incomplete row: click Submit Declaration → no popup, and the Variables pane (three-dots menu → Variables) shows <code>gblShowErrors = true</code>, <code>gblShowConfirm = false</code>. Fill one row completely — all four dropdowns chosen, Access Link <code>https://example.com</code>, Number of Accounts <code>5</code> — click again → <code>gblShowConfirm = true</code>. Then run OnStart (App → Run OnStart) to reset the flags; it re-seeds the gallery to one blank row, which is expected while building.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+
+    <details class="step" id="b6">
+      <summary><span class="dot"></span><span class="num">B6</span><span class="stitle">Red borders on all fourteen inputs</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do">Every input signals its own state through <strong>BorderColor</strong>: resting grey normally, red once <code class="cc">gblShowErrors</code> is on and the field is empty (or invalid). The first paste, done together — Tree view → expand <code class="cc">galSystems</code> → click <code class="cc">txtAppName</code> → property dropdown → <strong>BorderColor</strong> → Ctrl+A → paste:</p>
+        <p class="fxlabel">txtAppName · BorderColor</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>If(gblShowErrors &amp;&amp; IsBlank(ThisItem.AppName), Color.Red, RGBA(201, 204, 213, 1))</code></div>
+        <p class="do">Repeat for the other eleven plain fields — same formula, swapping only the <code class="cc">ThisItem.</code> field to match the control:</p>
+        <dl class="props">
+          <div><dt>txtVendor</dt><dd>swap to <code class="cc">ThisItem.Vendor</code></dd></div>
+          <div><dt>txtOwner</dt><dd>swap to <code class="cc">ThisItem.BizOwner</code></dd></div>
+          <div><dt>txtPurpose</dt><dd>swap to <code class="cc">ThisItem.Purpose</code></dd></div>
+          <div><dt>txtCustodian</dt><dd>swap to <code class="cc">ThisItem.Custodian</code></dd></div>
+          <div><dt>txtAdminAccts</dt><dd>swap to <code class="cc">ThisItem.AdminAccts</code></dd></div>
+          <div><dt>txtPermissions</dt><dd>swap to <code class="cc">ThisItem.Permissions</code></dd></div>
+          <div><dt>txtSupport</dt><dd>swap to <code class="cc">ThisItem.SupportContact</code></dd></div>
+          <div><dt>drpIAMRole</dt><dd>swap to <code class="cc">ThisItem.IAMRole</code></dd></div>
+          <div><dt>drpDivision</dt><dd>swap to <code class="cc">ThisItem.Division</code></dd></div>
+          <div><dt>drpStatus</dt><dd>swap to <code class="cc">ThisItem.Status</code></dd></div>
+          <div><dt>drpHandover</dt><dd>swap to <code class="cc">ThisItem.Handover</code></dd></div>
+        </dl>
+        <p class="do">The last two carry their format checks as well — full pastes, no editing:</p>
+        <p class="fxlabel">txtAccessLink · BorderColor</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>If(gblShowErrors &amp;&amp; (IsBlank(ThisItem.AccessLink) || !IsMatch(ThisItem.AccessLink, "^(https?://)?([\w\-]+\.)+[\w\-]+(/\S*)?$")), Color.Red, RGBA(201, 204, 213, 1))</code></div>
+        <p class="fxlabel">txtNumAccts · BorderColor</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>If(gblShowErrors &amp;&amp; (IsBlank(ThisItem.NumAccts) || !IsMatch(ThisItem.NumAccts, "^\d+$")), Color.Red, RGBA(201, 204, 213, 1))</code></div>
+        <div class="note why"><b>Why borders wait for a submit attempt</b>Keying everything off <code>gblShowErrors</code> means a user filling the form top-to-bottom is never shouted at mid-entry — red appears only after they try to submit, and clears live as they fix each field (the write-back keeps <code>colSystems</code> current, and these formulas read <code>ThisItem</code>, which <em>is</em> the collection row).</div>
+        <div class="note check"><b>Check before moving on</b>In Preview: click Submit Declaration with gaps in a row → red borders on exactly the empty and invalid fields, resting grey on the filled ones. Fill one bordered field and tab out — its border calms down on its own.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+
+    <details class="step" id="b7">
+      <summary><span class="dot"></span><span class="num">B7</span><span class="stitle">The per-row error message</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do">Each row card gets one red line at its foot that <em>names</em> every offending field — far friendlier than 14 separate error labels, and far fewer controls in the template. If Part 1 already gave you <code class="cc">lblRowError</code>, click it in the Tree view (inside <code class="cc">galSystems</code>); otherwise insert a Text label into the gallery template now, rename it <code class="cc">lblRowError</code>, and set X <code class="cc">16</code> · Y <code class="cc">552</code> · Width <code class="cc">1294</code> · Height <code class="cc">40</code> · Color <code class="cc">Color.Red</code>.</p>
+        <p class="do">Property dropdown → <strong>Text</strong> → Ctrl+A → paste:</p>
+        <p class="fxlabel">lblRowError · Text</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>If(!gblShowErrors, "",
+With({missing:
+    Concat(
+        Filter(
+            Table(
+                {f: "Application Name", bad: IsBlank(ThisItem.AppName)},
+                {f: "Vendor/Provider Name", bad: IsBlank(ThisItem.Vendor)},
+                {f: "Business Owner", bad: IsBlank(ThisItem.BizOwner)},
+                {f: "Application Purpose", bad: IsBlank(ThisItem.Purpose)},
+                {f: "IT Custodian", bad: IsBlank(ThisItem.Custodian)},
+                {f: "Admin Accounts Used", bad: IsBlank(ThisItem.AdminAccts)},
+                {f: "Permissions/Access Levels", bad: IsBlank(ThisItem.Permissions)},
+                {f: "Support/Vendor Contact", bad: IsBlank(ThisItem.SupportContact)},
+                {f: "IAM Role", bad: IsBlank(ThisItem.IAMRole)},
+                {f: "Access Link", bad: IsBlank(ThisItem.AccessLink)},
+                {f: "Division", bad: IsBlank(ThisItem.Division)},
+                {f: "Status", bad: IsBlank(ThisItem.Status)},
+                {f: "Handover Status", bad: IsBlank(ThisItem.Handover)},
+                {f: "Number of Accounts", bad: IsBlank(ThisItem.NumAccts)}
+            ), bad), f, ", ")},
+    If(missing &lt;&gt; "", "Missing: " &amp; missing &amp; ". ", "") &amp;
+    If(!IsBlank(ThisItem.AccessLink) &amp;&amp; !IsMatch(ThisItem.AccessLink, "^(https?://)?([\w\-]+\.)+[\w\-]+(/\S*)?$"),
+        "Access Link must be a valid URL (e.g. https://portal.vendor.com). ", "") &amp;
+    If(!IsBlank(ThisItem.NumAccts) &amp;&amp; !IsMatch(ThisItem.NumAccts, "^\d+$"),
+        "Number of Accounts must be a whole number.", "")
+))</code></div>
+        <p class="do">Then property dropdown → <strong>Visible</strong> → Ctrl+A → paste:</p>
+        <p class="fxlabel">lblRowError · Visible</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>gblShowErrors &amp;&amp; !IsBlank(Self.Text)</code></div>
+        <div class="note why"><b>How one label names every gap</b>The <code>Table(…)</code> builds fourteen tiny {field-name, is-it-bad} records, <code>Filter</code> keeps the bad ones, <code>Concat</code> strings their names together — then the two trailing <code>If</code>s append the URL and whole-number messages when those fields are filled but wrong. One formula, complete diagnosis.</div>
+        <div class="note check"><b>Check before moving on</b>Submit with a half-filled row → the row's foot reads "Missing: …" naming exactly the empty fields; put <code>abc</code> in Access Link and the URL message joins on. Fix a named field and tab out — it drops off the list immediately.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+
+    <details class="step" id="b8">
+      <summary><span class="dot"></span><span class="num">B8</span><span class="stitle">The form-level message, and three finishing touches</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do"><strong>a) Wire the footer label from B4.</strong> Tree view → click <code class="cc">lblFormError</code> → property dropdown → <strong>Text</strong> → Ctrl+A → paste:</p>
+        <p class="fxlabel">lblFormError · Text</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>If(!gblShowErrors, "",
+With({bad: CountRows(Filter(colSystems, IsBlank(AppName) || IsBlank(Vendor) || IsBlank(BizOwner) || IsBlank(Purpose) || IsBlank(Custodian) || IsBlank(AdminAccts) || IsBlank(Permissions) || IsBlank(SupportContact) || IsBlank(IAMRole) || IsBlank(Division) || IsBlank(Status) || IsBlank(Handover) || IsBlank(AccessLink) || !IsMatch(AccessLink, "^(https?://)?([\w\-]+\.)+[\w\-]+(/\S*)?$") || IsBlank(NumAccts) || !IsMatch(NumAccts, "^\d+$")))},
+    If(bad &gt; 0, bad &amp; " system record(s) have missing or invalid fields — fix the highlighted rows above.", "")
+))</code></div>
+        <p class="fxlabel">lblFormError · Visible</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>gblShowErrors &amp;&amp; !IsBlank(Self.Text)</code></div>
+        <p class="do"><strong>b) Smoother typing.</strong> On each of the ten text inputs, set <strong>DelayOutput</strong> → <code class="cc">true</code>: <code class="cc">txtAppName</code> · <code class="cc">txtVendor</code> · <code class="cc">txtOwner</code> · <code class="cc">txtPurpose</code> · <code class="cc">txtCustodian</code> · <code class="cc">txtAdminAccts</code> · <code class="cc">txtPermissions</code> · <code class="cc">txtSupport</code> · <code class="cc">txtAccessLink</code> · <code class="cc">txtNumAccts</code>. Validation now re-evaluates a beat after you pause instead of on every keystroke.</p>
+        <p class="do"><strong>c) Guard Delete Row during submission.</strong> Tree view → click <code class="cc">btnDeleteRow</code> → property dropdown → <strong>DisplayMode</strong> → Ctrl+A → paste:</p>
+        <p class="fxlabel">btnDeleteRow · DisplayMode</p>
+        <div class="fx"><button class="copy" type="button">Copy</button><code>If(gblSubmitting, DisplayMode.Disabled, DisplayMode.Edit)</code></div>
+        <div class="note tip"><b>Tab order, for free</b>In Preview, Tab should walk the left column top-to-bottom, then the right column. Classic controls follow their insertion order — if Part 1 was built in guide order, this already works. If a field is visited out of turn, select it and re-check its position in the Tree view rather than reaching for TabIndex.</div>
+        <div class="note check"><b>Check before moving on</b>Submit with two incomplete rows → the footer reads "2 system record(s) have missing or invalid fields…". Complete one of them → the count drops to 1 without another click. Complete both → the message disappears entirely.</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+
+    <details class="step" id="b9">
+      <summary><span class="dot"></span><span class="num">B9</span><span class="stitle">The validation test script</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p class="do">A condensed test aimed at everything this page added. Run OnStart first (App → Run OnStart) for a clean single blank row, then F5:</p>
+        <ul>
+          <li><strong>Empty submit</strong> → every field in the row wears a red border, the row foot lists all 14 field names, the footer reads "1 system record(s) have missing or invalid fields…". No popup opens.</li>
+          <li><strong>Bad URL</strong> → fill the row validly but put <code class="cc">not a link</code> in Access Link → the row message switches to the URL-specific line; only Access Link stays red-bordered.</li>
+          <li><strong>Bad number</strong> → Number of Accounts refuses letters as you type (its Format is Number); paste <code class="cc">12a</code> anyway → "Number of Accounts must be a whole number." appears. Replace with <code class="cc">25</code>.</li>
+          <li><strong>Live clearing</strong> → fix the remaining gaps one by one — each border calms and each name drops off the row message as you tab out; the footer count falls to nothing.</li>
+          <li><strong>Valid pass</strong> → click Submit Declaration on the fully valid declaration → silence, and the Variables pane shows <code>gblShowConfirm = true</code>. That silent flag is Part 3's opening move: the confirmation popup, the SharePoint write, and the IAM email.</li>
+        </ul>
+        <div class="note tip"><b>Hints still guiding</b>While you're in Preview, glance at a fresh row: grey hint text in every box, tooltips on the dropdowns, an asterisk on every label — the guidance layer and the enforcement layer now tell the same story.</div>
+        <div class="note check"><b>Done</b>Validation is complete: nothing incomplete or malformed can reach submission, and every error explains itself. On to Part 3 — confirm, submit, notify, and ship. 🏁</div>
+        <button class="done" type="button">Mark step done</button>
+      </div>
+    </details>
+  </section>
+
+  <footer>
+    Part 2 — guidance, validation, and error messaging: ten hints, four tooltips, fourteen required marks, one gate, and errors that name their culprits.<br>
+    The series: &nbsp;<a href="index.html">Series home</a> &nbsp;·&nbsp; <a href="part1.html">Part 1 — Foundations</a> &nbsp;·&nbsp; <strong>Part 2 — Validation</strong> &nbsp;·&nbsp; <a href="part3.html">Part 3 — Submit &amp; ship</a>
+  </footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var mem={};
+  var store={
+    get:function(k){try{return localStorage.getItem(k);}catch(e){return (k in mem)?mem[k]:null;}},
+    set:function(k,v){try{localStorage.setItem(k,v);}catch(e){mem[k]=v;}},
+    del:function(k){try{localStorage.removeItem(k);}catch(e){delete mem[k];}}
+  };
+  var KEY="bbk3pDeclareP2_v1";
+
+  function fallbackCopy(t){var ta=document.createElement("textarea");ta.value=t;ta.setAttribute("readonly","");ta.style.position="fixed";ta.style.top="-1000px";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");}catch(e){}document.body.removeChild(ta);}
+  function copyText(text,onDone){
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(onDone,function(){fallbackCopy(text);onDone();});}
+    else{fallbackCopy(text);onDone();}
+  }
+  document.querySelectorAll(".fx .copy").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      var code=btn.parentElement.querySelector("code");
+      copyText(code?code.textContent:"",function(){
+        btn.classList.add("copied");btn.textContent="✓";
+        setTimeout(function(){btn.classList.remove("copied");btn.textContent="Copy";},1300);
+      });
+    });
+  });
+  document.querySelectorAll("code.cc").forEach(function(chip){
+    chip.setAttribute("title","Tap to copy");
+    chip.addEventListener("click",function(){
+      copyText(chip.textContent,function(){
+        chip.classList.add("copied");
+        setTimeout(function(){chip.classList.remove("copied");},1100);
+      });
+    });
+  });
+
+  var steps=Array.prototype.slice.call(document.querySelectorAll("details.step"));
+  var total=steps.length;
+  var bar=document.getElementById("bar");
+  var label=document.getElementById("progLabel");
+  function loadDone(){var raw=store.get(KEY);if(!raw)return {};try{return JSON.parse(raw)||{};}catch(e){return {};}}
+  function saveDone(obj){store.set(KEY,JSON.stringify(obj));}
+  var doneMap=loadDone();
+  function refreshProgress(){
+    var n=0;
+    steps.forEach(function(d){if(d.classList.contains("isdone"))n++;});
+    bar.style.width=(total?Math.round(n/total*100):0)+"%";
+    label.textContent=n+" of "+total+" steps done";
+  }
+  steps.forEach(function(d){
+    if(doneMap[d.id])d.classList.add("isdone");
+    var btn=d.querySelector(".done");
+    function syncBtn(){btn.textContent=d.classList.contains("isdone")?"✓ Done — tap to undo":"Mark step done";}
+    syncBtn();
+    btn.addEventListener("click",function(){d.classList.toggle("isdone");doneMap[d.id]=d.classList.contains("isdone");saveDone(doneMap);syncBtn();refreshProgress();});
+  });
+  refreshProgress();
+  document.getElementById("reset").addEventListener("click",function(){
+    steps.forEach(function(d){d.classList.remove("isdone");d.querySelector(".done").textContent="Mark step done";});
+    doneMap={};store.del(KEY);refreshProgress();
+  });
+})();
+</script>
+</body>
+</html>
