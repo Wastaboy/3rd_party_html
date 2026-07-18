@@ -111,6 +111,11 @@
   code.cc.copied{background:var(--ok) !important;color:#fff !important}
   code.cc.copied::after{content:"✓";opacity:1}
 
+  /* visual language — navy button = click it in the product UI; amber chip = value you enter; key cap = press it */
+  code.cc{background:#fdf1dd !important;color:#7a4d10 !important;border:1px solid #eed7ae;border-radius:6px;padding:1px 6px}
+  kbd.ui{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:.8em;font-weight:600;color:#fff;background:linear-gradient(180deg,#2a4a85,#1F3B6E);border:1px solid #142a52;border-radius:8px;padding:2px 9px 3px;line-height:1.4;white-space:nowrap;box-shadow:0 1px 0 #0d1c3a;vertical-align:baseline}
+  kbd.key{font-family:"IBM Plex Mono",monospace;font-size:.72em;font-weight:600;color:#3d4a63;background:linear-gradient(#fff,#eef0f5);border:1px solid #c3cad9;border-bottom-width:3px;border-radius:6px;padding:1px 7px;line-height:1.5;white-space:nowrap}
+
   table.cols{width:100%;border-collapse:collapse;margin:0 0 13px;font-size:18px;background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden}
   table.cols th{background:#f7f9fc;font-family:"IBM Plex Mono",monospace;font-size:15px;letter-spacing:.04em;text-transform:uppercase;color:var(--navy);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
   table.cols td{padding:7px 10px;border-bottom:1px solid var(--line-soft);vertical-align:top}
@@ -163,7 +168,7 @@
     <h2 class="sec">Where you're starting from</h2>
     <div class="note tip"><b>Prerequisites — Parts 1 and 2 are done</b>The gallery form adds, edits and deletes rows with every keystroke mirrored into <code>colSystems</code>; validation blocks bad submissions with red borders and per-row messages. A fully valid Submit click already sets <code>gblShowConfirm</code> — it just has nothing to show yet. That's the first thing we fix.</div>
     <div class="tldr"><b>Substitute your values</b>Wherever you see <code>&lt;YOUR-SITE-URL&gt;</code> or <code>&lt;IAM-DL-EMAIL&gt;</code>, substitute your own SharePoint site URL and the IAM distribution list address.</div>
-    <div class="note why"><b>Tap any chip to copy</b>Dark boxes have a <strong>Copy</strong> button. Every inline chip like <code class="cc">btnConfirmYes</code> is tap-to-copy — the ⧉ mark is the reminder. Paste, never retype.</div>
+    <div class="note why"><b>How to read this guide — click vs enter</b>Every step uses the same three markers, so you always know where to look. A navy button like <kbd class="ui">+ Insert</kbd> is something you <strong>click</strong> in Power Apps, SharePoint or Power Automate — a menu, a button, or a property name. An amber chip like <code class="cc">btnConfirmYes</code> is a <strong>value you enter</strong> — tap the chip to copy it (the ⧉ mark is the reminder), then paste it where the step says. A key cap like <kbd class="key">Ctrl+A</kbd> is <strong>pressed on the keyboard</strong>. Dark boxes are complete formulas with their own <strong>Copy</strong> button. Paste, never retype.</div>
   </section>
 
   <section class="block" id="phase1">
@@ -172,15 +177,15 @@
     <details class="step" id="c1" open>
       <summary><span class="dot"></span><span class="num">C1</span><span class="stitle">Build the confirmation popup</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
       <div class="body">
-        <p class="do">Six controls, inserted in this order so they stack correctly (later inserts sit on top). All six get the same <strong>Visible</strong> formula, so the whole popup appears and disappears as one. To rename a control: <strong>double-click its name in the Tree view → paste → Enter</strong>.</p>
+        <p class="do">Six controls, inserted in this order so they stack correctly (later inserts sit on top). All six get the same <kbd class="ui">Visible</kbd> formula, so the whole popup appears and disappears as one. To rename a control: <strong>double-click its name in the Tree view → paste → <kbd class="key">Enter</kbd></strong>.</p>
         <div class="note warn"><b>Click empty canvas BEFORE each insert</b>Click an <strong>empty</strong> part of the canvas (or select <code class="cc">scrMain</code> at the top of the Tree view) before inserting — if a gallery control is selected, the new control lands <strong>inside the gallery</strong> and replicates into every row. Check after each insert: in the Tree view the new control sits at screen level, <strong>not</strong> indented under <code class="cc">galSystems</code>. If it's nested: delete it, click the screen, insert again.</div>
         <ol class="steps2">
-          <li><strong>+ Insert</strong> (left rail) → search <code class="cc">Rectangle</code> → click it → rename it <code class="cc">recOverlay</code>. This is the full-screen dimmer.</li>
-          <li><strong>+ Insert</strong> → search <code class="cc">Rectangle</code> → rename it <code class="cc">recConfirmCard</code>. This is the white card.</li>
-          <li><strong>+ Insert</strong> → search <code class="cc">Text label</code> → rename it <code class="cc">lblConfirmTitle</code>.</li>
-          <li><strong>+ Insert</strong> → search <code class="cc">Text label</code> → rename it <code class="cc">lblConfirmMsg</code>.</li>
-          <li><strong>+ Insert</strong> → search <code class="cc">Button</code> → rename it <code class="cc">btnConfirmYes</code> → property dropdown (top-left, next to the fx bar) → <strong>Text</strong> → Ctrl+A → paste (quotes included): <code class="cc">"Submit"</code>.</li>
-          <li><strong>+ Insert</strong> → search <code class="cc">Button</code> → rename it <code class="cc">btnConfirmNo</code> → property dropdown → <strong>Text</strong> → Ctrl+A → paste: <code class="cc">"Cancel"</code>.</li>
+          <li><kbd class="ui">+ Insert</kbd> (left rail) → search <code class="cc">Rectangle</code> → click it → rename it <code class="cc">recOverlay</code>. This is the full-screen dimmer.</li>
+          <li><kbd class="ui">+ Insert</kbd> → search <code class="cc">Rectangle</code> → rename it <code class="cc">recConfirmCard</code>. This is the white card.</li>
+          <li><kbd class="ui">+ Insert</kbd> → search <code class="cc">Text label</code> → rename it <code class="cc">lblConfirmTitle</code>.</li>
+          <li><kbd class="ui">+ Insert</kbd> → search <code class="cc">Text label</code> → rename it <code class="cc">lblConfirmMsg</code>.</li>
+          <li><kbd class="ui">+ Insert</kbd> → search <code class="cc">Button</code> → rename it <code class="cc">btnConfirmYes</code> → property dropdown (top-left, next to the fx bar) → <kbd class="ui">Text</kbd> → <kbd class="key">Ctrl+A</kbd> → paste (quotes included): <code class="cc">"Submit"</code>.</li>
+          <li><kbd class="ui">+ Insert</kbd> → search <code class="cc">Button</code> → rename it <code class="cc">btnConfirmNo</code> → property dropdown → <kbd class="ui">Text</kbd> → <kbd class="key">Ctrl+A</kbd> → paste: <code class="cc">"Cancel"</code>.</li>
         </ol>
         <p class="do">Size and place them: select each control, then type these into the <strong>Properties pane (right side) → Position → X / Y and Size → Width / Height</strong>. Every number is tap-to-copy:</p>
         <dl class="props">
@@ -191,23 +196,23 @@
           <div><dt>btnConfirmYes</dt><dd>X <code class="cc">693</code> · Y <code class="cc">460</code> · Width <code class="cc">216</code> · Height <code class="cc">48</code></dd></div>
           <div><dt>btnConfirmNo</dt><dd>X <code class="cc">457</code> · Y <code class="cc">460</code> · Width <code class="cc">216</code> · Height <code class="cc">48</code></dd></div>
         </dl>
-        <p class="do">Fills and fonts <strong>cannot</strong> be pasted into the Properties pane's colour picker — they go through the formula bar. Select <code class="cc">recOverlay</code> → property dropdown → <strong>Fill</strong> → Ctrl+A → paste:</p>
+        <p class="do">Fills and fonts <strong>cannot</strong> be pasted into the Properties pane's colour picker — they go through the formula bar. Select <code class="cc">recOverlay</code> → property dropdown → <kbd class="ui">Fill</kbd> → <kbd class="key">Ctrl+A</kbd> → paste:</p>
         <p class="fxlabel">recOverlay · Fill</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>RGBA(0, 0, 0, 0.4)</code></div>
-        <p class="do">Select <code class="cc">recConfirmCard</code> → property dropdown → <strong>Fill</strong> → Ctrl+A → paste:</p>
+        <p class="do">Select <code class="cc">recConfirmCard</code> → property dropdown → <kbd class="ui">Fill</kbd> → <kbd class="key">Ctrl+A</kbd> → paste:</p>
         <p class="fxlabel">recConfirmCard · Fill</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>RGBA(255, 255, 255, 1)</code></div>
-        <p class="do">Select <code class="cc">lblConfirmTitle</code> → right pane → Font weight <strong>Bold</strong> · Font size <code class="cc">22</code>.</p>
-        <p class="do">Now the formulas. Select <strong>each of the six controls in turn</strong> → property dropdown → <strong>Visible</strong> → <strong>Ctrl+A</strong> → paste (a new control's Visible already contains <code>true</code> — Ctrl+A replaces it):</p>
+        <p class="do">Select <code class="cc">lblConfirmTitle</code> → right pane → Font weight <kbd class="ui">Bold</kbd> · Font size <code class="cc">22</code>.</p>
+        <p class="do">Now the formulas. Select <strong>each of the six controls in turn</strong> → property dropdown → <kbd class="ui">Visible</kbd> → <kbd class="key">Ctrl+A</kbd> → paste (a new control's Visible already contains <code>true</code> — <kbd class="key">Ctrl+A</kbd> replaces it):</p>
         <p class="fxlabel">all six popup controls · Visible</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>gblShowConfirm</code></div>
-        <p class="do">Select <code class="cc">lblConfirmTitle</code> → property dropdown → <strong>Text</strong> → Ctrl+A → paste:</p>
+        <p class="do">Select <code class="cc">lblConfirmTitle</code> → property dropdown → <kbd class="ui">Text</kbd> → <kbd class="key">Ctrl+A</kbd> → paste:</p>
         <p class="fxlabel">lblConfirmTitle · Text</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>"Confirm submission"</code></div>
-        <p class="do">Select <code class="cc">lblConfirmMsg</code> → property dropdown → <strong>Text</strong> → Ctrl+A → paste:</p>
+        <p class="do">Select <code class="cc">lblConfirmMsg</code> → property dropdown → <kbd class="ui">Text</kbd> → <kbd class="key">Ctrl+A</kbd> → paste:</p>
         <p class="fxlabel">lblConfirmMsg · Text</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>"You are about to submit " &amp; CountRows(colSystems) &amp; " system record(s) to the 3rd party inventory. The IAM team will be notified by email. Do you want to proceed?"</code></div>
-        <p class="do">Select <code class="cc">btnConfirmNo</code> → property dropdown → <strong>OnSelect</strong> → Ctrl+A → paste (a new button's OnSelect already contains <code>false</code>):</p>
+        <p class="do">Select <code class="cc">btnConfirmNo</code> → property dropdown → <kbd class="ui">OnSelect</kbd> → <kbd class="key">Ctrl+A</kbd> → paste (a new button's OnSelect already contains <code>false</code>):</p>
         <p class="fxlabel">btnConfirmNo · OnSelect</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>Set(gblShowConfirm, false)</code></div>
         <div class="note why"><b>Why btnConfirmYes stays empty for now</b>Its OnSelect is the big submit formula — but that formula calls the notification flow, which doesn't exist yet. We build the flow first (C2–C4), then wire the button (C5). The requirement is exactly this popup: a confirmation message with a Submit and a Cancel button.</div>
@@ -226,12 +231,12 @@
         <p class="do">The flow is built in Power Automate, in the <strong>same environment</strong> as your app.</p>
         <ol class="steps2">
           <li>Open <code class="cc">https://make.powerautomate.com</code> → check the environment picker (top right) matches the app's environment.</li>
-          <li><strong>Create</strong> (left rail) → <strong>Instant cloud flow</strong>.</li>
-          <li>Flow name: paste <code class="cc">SystemDeclarationNotify</code>. Choose the trigger <strong>PowerApps (V2)</strong> → <strong>Create</strong>.</li>
-          <li>Click the <strong>PowerApps (V2)</strong> trigger card → <strong>Add an input</strong> → <strong>Text</strong>. The name goes in the box labeled <strong>Input</strong> on the new row — Ctrl+A → paste <code class="cc">ResponderName</code>.</li>
-          <li><strong>Add an input</strong> → <strong>Text</strong> → <code class="cc">ResponderEmail</code>.</li>
-          <li><strong>Add an input</strong> → <strong>Text</strong> → <code class="cc">SubmissionDate</code>.</li>
-          <li><strong>Add an input</strong> → <strong>Text</strong> → <code class="cc">SystemCount</code>.</li>
+          <li><kbd class="ui">Create</kbd> (left rail) → <kbd class="ui">Instant cloud flow</kbd>.</li>
+          <li>Flow name: paste <code class="cc">SystemDeclarationNotify</code>. Choose the trigger <kbd class="ui">PowerApps (V2)</kbd> → <kbd class="ui">Create</kbd>.</li>
+          <li>Click the <kbd class="ui">PowerApps (V2)</kbd> trigger card → <kbd class="ui">Add an input</kbd> → <kbd class="ui">Text</kbd>. The name goes in the box labeled <strong>Input</strong> on the new row — <kbd class="key">Ctrl+A</kbd> → paste <code class="cc">ResponderName</code>.</li>
+          <li><kbd class="ui">Add an input</kbd> → <kbd class="ui">Text</kbd> → <code class="cc">ResponderEmail</code>.</li>
+          <li><kbd class="ui">Add an input</kbd> → <kbd class="ui">Text</kbd> → <code class="cc">SubmissionDate</code>.</li>
+          <li><kbd class="ui">Add an input</kbd> → <kbd class="ui">Text</kbd> → <code class="cc">SystemCount</code>.</li>
         </ol>
         <div class="note warn"><b>The input ORDER is the .Run() signature</b>Create the four inputs in exactly this order — <code>ResponderName</code>, <code>ResponderEmail</code>, <code>SubmissionDate</code>, <code>SystemCount</code>. When the app calls <code>SystemDeclarationNotify.Run(...)</code> in C5, the arguments are matched <em>by position</em>. All four are Text on purpose: the app pre-formats the date and count, which sidesteps timezone and locale conversion entirely.</div>
         <div class="note check"><b>Check before moving on</b>The trigger card lists four inputs, top to bottom: ResponderName, ResponderEmail, SubmissionDate, SystemCount — all of type Text.</div>
@@ -243,7 +248,7 @@
       <summary><span class="dot"></span><span class="num">C3</span><span class="stitle">The email to the IAM team</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
       <div class="body">
         <ol class="steps2">
-          <li>Under the trigger: <strong>New step</strong> (in the new designer: <strong>+ Add an action</strong>) → search <code class="cc">Send an email (V2)</code> → pick the <strong>Office 365 Outlook</strong> action.</li>
+          <li>Under the trigger: <kbd class="ui">New step</kbd> (in the new designer: <kbd class="ui">+ Add an action</kbd>) → search <code class="cc">Send an email (V2)</code> → pick the <kbd class="ui">Office 365 Outlook</kbd> action.</li>
           <li><strong>To:</strong> your IAM distribution list — <code>&lt;IAM-DL-EMAIL&gt;</code>.</li>
           <li><strong>Subject:</strong> paste exactly:</li>
         </ol>
@@ -259,13 +264,13 @@
 &lt;/ul&gt;
 &lt;p&gt;&lt;a href="&lt;YOUR-SITE-URL&gt;/Lists/3rd%20party%20inventory/AllItems.aspx"&gt;Open the 3rd party inventory list&lt;/a&gt;&lt;/p&gt;</code></div>
         <ol class="steps2">
-          <li>Place the cursor after <strong>Responder:</strong> (before the closing <code>&lt;/li&gt;</code>), then click the lightning-bolt <strong>Dynamic content</strong> button (or the <strong>Add dynamic content</strong> link under the field) → insert the <code class="cc">ResponderName</code> chip.</li>
+          <li>Place the cursor after <strong>Responder:</strong> (before the closing <code>&lt;/li&gt;</code>), then click the lightning-bolt <kbd class="ui">Dynamic content</kbd> button (or the <kbd class="ui">Add dynamic content</kbd> link under the field) → insert the <code class="cc">ResponderName</code> chip.</li>
           <li>Same for <strong>Submission date:</strong> → insert <code class="cc">SubmissionDate</code>.</li>
           <li>Same for <strong>Number of declared systems:</strong> → insert <code class="cc">SystemCount</code>.</li>
           <li>Fix the link: replace <code>&lt;YOUR-SITE-URL&gt;</code> with your real site URL.</li>
-          <li><strong>Save</strong> the flow.</li>
+          <li><kbd class="ui">Save</kbd> the flow.</li>
         </ol>
-        <div class="note tip"><b>Optional: CC the responder</b>Show advanced options (in the new designer: <strong>Advanced parameters</strong>) → CC → insert the <code>ResponderEmail</code> dynamic content chip. The submitter gets a copy of what IAM received — a nice audit courtesy, and it's why the app passes the email at all.</div>
+        <div class="note tip"><b>Optional: CC the responder</b>Show advanced options (in the new designer: <kbd class="ui">Advanced parameters</kbd>) → CC → insert the <code>ResponderEmail</code> dynamic content chip. The submitter gets a copy of what IAM received — a nice audit courtesy, and it's why the app passes the email at all.</div>
         <div class="note warn"><b>Never rename this flow later</b>The app will bind to the name <code>SystemDeclarationNotify</code>. Renaming the flow after C4 breaks <code>SystemDeclarationNotify.Run(...)</code> in the app — the fix is to remove and re-add the flow in the Power Automate pane. Name it right once, now, before it ever touches the app.</div>
         <div class="note check"><b>Check before moving on</b>The flow shows: PowerApps (V2) trigger with 4 inputs → Send an email (V2) with To = the IAM DL, the exact subject, and a body containing three dynamic-content chips and the list link. Saved without errors.</div>
         <button class="done" type="button">Mark step done</button>
@@ -277,11 +282,11 @@
       <div class="body">
         <ol class="steps2">
           <li>Back in Power Apps Studio (your app open for editing).</li>
-          <li>Left rail → <strong>Power Automate</strong> (the flow icon) → <strong>Add flow</strong>.</li>
+          <li>Left rail → <kbd class="ui">Power Automate</kbd> (the flow icon) → <kbd class="ui">Add flow</kbd>.</li>
           <li>Pick <code class="cc">SystemDeclarationNotify</code> from the list.</li>
         </ol>
-        <div class="note tip"><b>First-time connection consent</b>If a <strong>Connections</strong> screen appears asking to sign in to Office 365 Outlook, click <strong>Sign in / Allow</strong> — the flow can't send mail without it.</div>
-        <div class="note check"><b>Check before moving on</b>Click into any formula bar and type <code>SystemDeclarationNotify.Run(</code> — IntelliSense autocompletes the flow name and hints four text arguments. Press Esc without saving the test-typing.</div>
+        <div class="note tip"><b>First-time connection consent</b>If a <strong>Connections</strong> screen appears asking to sign in to Office 365 Outlook, click <kbd class="ui">Sign in / Allow</kbd> — the flow can't send mail without it.</div>
+        <div class="note check"><b>Check before moving on</b>Click into any formula bar and type <code>SystemDeclarationNotify.Run(</code> — IntelliSense autocompletes the flow name and hints four text arguments. Press <kbd class="key">Esc</kbd> without saving the test-typing.</div>
         <button class="done" type="button">Mark step done</button>
       </div>
     </details>
@@ -294,7 +299,7 @@
       <summary><span class="dot"></span><span class="num">C5</span><span class="stitle">The submit formula — write, notify, succeed</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
       <div class="body">
         <p class="do">One paste. It writes every row of <code class="cc">colSystems</code> to the list, stamps the audit trail (responder name, email, date/time), calls the flow, and flips to the success screen. It reads <strong>only the collection</strong> — never control state — which is the whole point of the Part 1 architecture.</p>
-        <p class="do">Tree view → click <code class="cc">btnConfirmYes</code> → property dropdown → <strong>OnSelect</strong> → <strong>Ctrl+A</strong> → paste (the button's OnSelect already contains <code>false</code> — Ctrl+A replaces it; pasting without it breaks the formula):</p>
+        <p class="do">Tree view → click <code class="cc">btnConfirmYes</code> → property dropdown → <kbd class="ui">OnSelect</kbd> → <kbd class="key">Ctrl+A</kbd> → paste (the button's OnSelect already contains <code>false</code> — <kbd class="key">Ctrl+A</kbd> replaces it; pasting without it breaks the formula):</p>
         <p class="fxlabel">btnConfirmYes · OnSelect</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>Set(gblSubmitting, true);
 IfError(
@@ -330,8 +335,8 @@ IfError(
     Set(gblShowSuccess, true)
 )</code></div>
         <div class="note why"><b>How to paste the quirky column names</b>Four column names have traps baked in by the original list: <code>'Vendor/ Provider Name'</code> (space after the slash), <code>'Business owner'</code> (lowercase o), <code>'Permissions / Access levels'</code> (lowercase l), and <code>'Division '</code> — with a <strong>trailing space</strong>. The paste above already has them exactly right. If you ever retype one, accept IntelliSense's autocomplete — a hand-typed <code>'Division'</code> (no space) will not resolve.</div>
-        <div class="note warn"><b>Adapt to YOUR column types — the A1 worksheet moment</b>The formula above assumes the choice-like columns are <strong>text</strong> (the live list data suggests exactly that). Pull out the column worksheet you filled in at step A1 and adjust any line that differs:<br>· Column is <strong>Choice</strong> → wrap in a record: <code>'IAM Role': {Value: row.IAMRole}</code> — same treatment for <code>'Division '</code>, <code>Status</code>, <code>'Handover Status'</code>.<br>· <code>Number of Accounts</code> is a <strong>Number</strong> column → <code>'Number of Accounts': Value(row.NumAccts)</code>.<br>· <code>Submission Date</code> is <strong>Text</strong> → <code>'Submission Date': Text(Now(), "yyyy-mm-dd hh:mm")</code>.<br>Guessed wrong? The formula bar flags that exact line with "expected record value, found text" (or the reverse). Fix just that line per the rules above.</div>
-        <div class="note tip"><b>IfError needs its switch on</b>This formula relies on <strong>Formula-level error management</strong>, which you enabled in A2 (Settings → Upcoming features). If <code>IfError</code> shows as an unknown function, flip that switch on and re-paste.</div>
+        <div class="note warn"><b>Adapt to YOUR column types — the A1 worksheet moment</b>The formula above assumes the choice-like columns are <strong>text</strong> (the live list data suggests exactly that). Pull out the column worksheet you filled in at step A1 and adjust any line that differs:<br>· Column is <strong>Choice</strong> → wrap in a record: <code>'IAM Role': {Value: row.IAMRole}</code> — same treatment for <code>'Division '</code>, <code>Status</code>, <code>'Handover Status'</code>.<br>· <code>Number of Accounts</code> is a <strong>Number</strong> column → <code>'Number of Accounts': Value(row.NumAccts)</code>.<br>· <code>Submission Date</code> is <kbd class="ui">Text</kbd> → <code>'Submission Date': Text(Now(), "yyyy-mm-dd hh:mm")</code>.<br>Guessed wrong? The formula bar flags that exact line with "expected record value, found text" (or the reverse). Fix just that line per the rules above.</div>
+        <div class="note tip"><b>IfError needs its switch on</b>This formula relies on <strong>Formula-level error management</strong>, which you enabled in A2 (<kbd class="ui">Settings</kbd> → search <code class="cc">error</code>). If <code>IfError</code> shows as an unknown function, flip that switch on and re-paste.</div>
         <div class="note check"><b>Check before moving on</b>No red in the formula bar after your worksheet adjustments. The App checker (stethoscope icon) reports no formula errors on <code>btnConfirmYes</code>. Don't test-click yet — the success screen it flips to doesn't exist until C6.</div>
         <button class="done" type="button">Mark step done</button>
       </div>
@@ -340,37 +345,37 @@ IfError(
     <details class="step" id="c6">
       <summary><span class="dot"></span><span class="num">C6</span><span class="stitle">The success screen and the reset</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
       <div class="body">
-        <p class="do">Same recipe as C1 — five controls, inserted in order, all sharing one Visible flag. Rename each by double-clicking its name in the Tree view → paste → Enter. Geometry goes in the <strong>Properties pane → Position / Size</strong>, exactly as in C1:</p>
+        <p class="do">Same recipe as C1 — five controls, inserted in order, all sharing one Visible flag. Rename each by double-clicking its name in the Tree view → paste → <kbd class="key">Enter</kbd>. Geometry goes in the <strong>Properties pane → Position / Size</strong>, exactly as in C1:</p>
         <div class="note warn"><b>Same trap as C1 — click empty canvas first</b>Before every insert, click an <strong>empty</strong> part of the canvas or select <code class="cc">scrMain</code> in the Tree view; then confirm the new control sits at screen level, <strong>not</strong> indented under <code class="cc">galSystems</code>. If it's nested: delete it, click the screen, insert again.</div>
         <ol class="steps2">
-          <li><strong>+ Insert</strong> → search <code class="cc">Rectangle</code> → rename <code class="cc">recSuccessOverlay</code> — X <code class="cc">0</code> · Y <code class="cc">0</code> · Width <code class="cc">1366</code> · Height <code class="cc">768</code>.</li>
-          <li><strong>+ Insert</strong> → search <code class="cc">Rectangle</code> → rename <code class="cc">recSuccessCard</code> — X <code class="cc">433</code> · Y <code class="cc">234</code> · Width <code class="cc">500</code> · Height <code class="cc">300</code>.</li>
-          <li><strong>+ Insert</strong> → search <code class="cc">Text label</code> → rename <code class="cc">lblSuccessTitle</code> — X <code class="cc">457</code> · Y <code class="cc">254</code> · Width <code class="cc">452</code> · Height <code class="cc">40</code> · right pane → Font weight <strong>Bold</strong> · Font size <code class="cc">22</code>.</li>
-          <li><strong>+ Insert</strong> → search <code class="cc">Text label</code> → rename <code class="cc">lblSuccessMsg</code> — X <code class="cc">457</code> · Y <code class="cc">300</code> · Width <code class="cc">452</code> · Height <code class="cc">130</code>.</li>
-          <li><strong>+ Insert</strong> → search <code class="cc">Button</code> → rename <code class="cc">btnNewDeclaration</code> — X <code class="cc">457</code> · Y <code class="cc">460</code> · Width <code class="cc">452</code> · Height <code class="cc">48</code> → property dropdown → <strong>Text</strong> → Ctrl+A → paste: <code class="cc">"Start a new declaration"</code>.</li>
+          <li><kbd class="ui">+ Insert</kbd> → search <code class="cc">Rectangle</code> → rename <code class="cc">recSuccessOverlay</code> — X <code class="cc">0</code> · Y <code class="cc">0</code> · Width <code class="cc">1366</code> · Height <code class="cc">768</code>.</li>
+          <li><kbd class="ui">+ Insert</kbd> → search <code class="cc">Rectangle</code> → rename <code class="cc">recSuccessCard</code> — X <code class="cc">433</code> · Y <code class="cc">234</code> · Width <code class="cc">500</code> · Height <code class="cc">300</code>.</li>
+          <li><kbd class="ui">+ Insert</kbd> → search <code class="cc">Text label</code> → rename <code class="cc">lblSuccessTitle</code> — X <code class="cc">457</code> · Y <code class="cc">254</code> · Width <code class="cc">452</code> · Height <code class="cc">40</code> · right pane → Font weight <kbd class="ui">Bold</kbd> · Font size <code class="cc">22</code>.</li>
+          <li><kbd class="ui">+ Insert</kbd> → search <code class="cc">Text label</code> → rename <code class="cc">lblSuccessMsg</code> — X <code class="cc">457</code> · Y <code class="cc">300</code> · Width <code class="cc">452</code> · Height <code class="cc">130</code>.</li>
+          <li><kbd class="ui">+ Insert</kbd> → search <code class="cc">Button</code> → rename <code class="cc">btnNewDeclaration</code> — X <code class="cc">457</code> · Y <code class="cc">460</code> · Width <code class="cc">452</code> · Height <code class="cc">48</code> → property dropdown → <kbd class="ui">Text</kbd> → <kbd class="key">Ctrl+A</kbd> → paste: <code class="cc">"Start a new declaration"</code>.</li>
         </ol>
-        <p class="do">The two fills go through the formula bar (not the Properties pane). Select <code class="cc">recSuccessOverlay</code> → property dropdown → <strong>Fill</strong> → Ctrl+A → paste:</p>
+        <p class="do">The two fills go through the formula bar (not the Properties pane). Select <code class="cc">recSuccessOverlay</code> → property dropdown → <kbd class="ui">Fill</kbd> → <kbd class="key">Ctrl+A</kbd> → paste:</p>
         <p class="fxlabel">recSuccessOverlay · Fill</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>RGBA(0, 0, 0, 0.4)</code></div>
-        <p class="do">Select <code class="cc">recSuccessCard</code> → property dropdown → <strong>Fill</strong> → Ctrl+A → paste:</p>
+        <p class="do">Select <code class="cc">recSuccessCard</code> → property dropdown → <kbd class="ui">Fill</kbd> → <kbd class="key">Ctrl+A</kbd> → paste:</p>
         <p class="fxlabel">recSuccessCard · Fill</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>RGBA(255, 255, 255, 1)</code></div>
-        <p class="do">Select <strong>each of the five controls</strong> → property dropdown → <strong>Visible</strong> → <strong>Ctrl+A</strong> → paste:</p>
+        <p class="do">Select <strong>each of the five controls</strong> → property dropdown → <kbd class="ui">Visible</kbd> → <kbd class="key">Ctrl+A</kbd> → paste:</p>
         <p class="fxlabel">all five success controls · Visible</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>gblShowSuccess</code></div>
-        <p class="do">Select <code class="cc">lblSuccessTitle</code> → property dropdown → <strong>Text</strong> → Ctrl+A → paste:</p>
+        <p class="do">Select <code class="cc">lblSuccessTitle</code> → property dropdown → <kbd class="ui">Text</kbd> → <kbd class="key">Ctrl+A</kbd> → paste:</p>
         <p class="fxlabel">lblSuccessTitle · Text</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>"Declaration submitted 🎉"</code></div>
-        <p class="do">Select <code class="cc">lblSuccessMsg</code> → property dropdown → <strong>Text</strong> → Ctrl+A → paste:</p>
+        <p class="do">Select <code class="cc">lblSuccessMsg</code> → property dropdown → <kbd class="ui">Text</kbd> → <kbd class="key">Ctrl+A</kbd> → paste:</p>
         <p class="fxlabel">lblSuccessMsg · Text</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>"Your system records have been added to the 3rd party inventory and the IAM team has been notified. You can close the app or start a new declaration."</code></div>
-        <p class="do">Select <code class="cc">btnNewDeclaration</code> → property dropdown → <strong>OnSelect</strong> → Ctrl+A → paste:</p>
+        <p class="do">Select <code class="cc">btnNewDeclaration</code> → property dropdown → <kbd class="ui">OnSelect</kbd> → <kbd class="key">Ctrl+A</kbd> → paste:</p>
         <p class="fxlabel">btnNewDeclaration · OnSelect</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>Set(gblNextSeq, 2);
 ClearCollect(colSystems, {RowID: GUID(), SeqNo: 1, AppName: "", Vendor: "", BizOwner: "", Purpose: "", Custodian: "", AdminAccts: "", Permissions: "", SupportContact: "", IAMRole: "", AccessLink: "", Division: "", Status: "", Handover: "", NumAccts: ""});
 Set(gblShowSuccess, false)</code></div>
         <div class="note why"><b>Why the reset mints a fresh GUID</b>Re-seeding <code>colSystems</code> with a brand-new <code>RowID</code> forces the gallery to build brand-new items, so no leftover control state from the previous declaration can bleed into the next one. No <code>Reset()</code> calls needed — the collection is, as always, the single source of truth.</div>
-        <div class="note check"><b>Check before moving on</b>Both overlays are invisible in the editor's default state (their flags are false). To eyeball the layout: select <code class="cc">recSuccessOverlay</code> → property dropdown → <strong>Visible</strong> → Ctrl+A → temporarily type <code class="cc">true</code> — repeat for the card, title, message and button (or Ctrl-click all five in the Tree view and set them once). The card reads cleanly and the button spans under the message. Then restore each Visible to <code class="cc">gblShowSuccess</code>.</div>
+        <div class="note check"><b>Check before moving on</b>Both overlays are invisible in the editor's default state (their flags are false). To eyeball the layout: select <code class="cc">recSuccessOverlay</code> → property dropdown → <kbd class="ui">Visible</kbd> → <kbd class="key">Ctrl+A</kbd> → temporarily type <code class="cc">true</code> — repeat for the card, title, message and button (or Ctrl-click all five in the Tree view and set them once). The card reads cleanly and the button spans under the message. Then restore each Visible to <code class="cc">gblShowSuccess</code>.</div>
         <button class="done" type="button">Mark step done</button>
       </div>
     </details>
@@ -383,9 +388,9 @@ Set(gblShowSuccess, false)</code></div>
       <summary><span class="dot"></span><span class="num">C7</span><span class="stitle">Verify the audit trail with one real record</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
       <div class="body">
         <ol class="steps2">
-          <li>Preview the app (F5). Fill the single row with obviously-test values (e.g. Application Name <code class="cc">ZZ Test App — delete me</code>), pick any dropdown values, a valid URL and a number.</li>
-          <li>Submit → the popup appears → <strong>Submit</strong>.</li>
-          <li>The success screen appears. Press <strong>Esc</strong> to leave Preview, then open the <code class="cc">3rd party inventory</code> list in the browser.</li>
+          <li>Preview the app (<kbd class="key">F5</kbd>). Fill the single row with obviously-test values (e.g. Application Name <code class="cc">ZZ Test App — delete me</code>), pick any dropdown values, a valid URL and a number.</li>
+          <li>Submit → the popup appears → <kbd class="ui">Submit</kbd>.</li>
+          <li>The success screen appears. Press <kbd class="key">Esc</kbd> to leave Preview, then open the <code class="cc">3rd party inventory</code> list in the browser.</li>
         </ol>
         <div class="note check"><b>Check before moving on</b>The newest list item holds your test values in the right columns, and the audit trio is stamped: <code>Responder Name</code> is your full name, <code>Responder Email</code> is your address, <code>Submission Date</code> is just now. SharePoint's built-in <code>Created By</code> / <code>Created</code> corroborate them. The IAM mailbox (or your CC copy) received the notification. Delete the test item when you're done looking.</div>
         <button class="done" type="button">Mark step done</button>
@@ -395,14 +400,14 @@ Set(gblShowSuccess, false)</code></div>
     <details class="step" id="c8">
       <summary><span class="dot"></span><span class="num">C8</span><span class="stitle">The end-to-end test script</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
       <div class="body">
-        <p class="do">The full journey, exactly as a business user will drive it. F5 from the top:</p>
+        <p class="do">The full journey, exactly as a business user will drive it. <kbd class="key">F5</kbd> from the top:</p>
         <ul>
-          <li><strong>Add System</strong> twice → three rows. Fill all three completely (distinct app names — Test A, Test B, Test C).</li>
-          <li>Submit → popup says <strong>"3 system record(s)"</strong> → press <strong>Cancel</strong> → popup closes, all three rows intact.</li>
-          <li>Submit again → <strong>Submit</strong> on the popup → success screen appears.</li>
+          <li><kbd class="ui">+ Add System</kbd> twice → three rows. Fill all three completely (distinct app names — Test A, Test B, Test C).</li>
+          <li>Submit → popup says <strong>"3 system record(s)"</strong> → press <kbd class="ui">Cancel</kbd> → popup closes, all three rows intact.</li>
+          <li>Submit again → <kbd class="ui">Submit</kbd> on the popup → success screen appears.</li>
           <li>In SharePoint: three new items, values in the right columns — spot-check that each row's division landed in the <code>Division </code> column (the trailing-space one) and the number in <code>Number of Accounts</code>.</li>
           <li>The IAM email arrived: subject exact, responder name right, <strong>Number of declared systems: 3</strong>, and the link opens the list.</li>
-          <li>Back in the app: <strong>Start a new declaration</strong> → one blank row, count label says 1, no red anywhere.</li>
+          <li>Back in the app: <kbd class="ui">Start a new declaration</kbd> → one blank row, count label says 1, no red anywhere.</li>
           <li>Clean up the three test items in SharePoint.</li>
         </ul>
         <div class="note check"><b>Check before moving on</b>Every bullet passed — including Cancel preserving the rows and the reset landing on exactly one clean blank row.</div>
@@ -414,10 +419,10 @@ Set(gblShowSuccess, false)</code></div>
       <summary><span class="dot"></span><span class="num">C9</span><span class="stitle">The victory lap — publish and share</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
       <div class="body">
         <ol class="steps2">
-          <li><strong>File</strong> → <strong>Save</strong> → <strong>Publish</strong> → <strong>Publish this version</strong>.</li>
-          <li>Back on the app's detail page (or File → Share): <strong>Share</strong> the app with your users or a security group.</li>
-          <li>Give the same people <strong>Contribute</strong> permission on the <code class="cc">3rd party inventory</code> list — the app writes as the signed-in user, so without list rights their submits fail. The clicks: open the list → gear icon → <strong>List settings</strong> → <strong>Permissions for this list</strong> → <strong>Grant Permissions</strong> → enter the users or group → choose <strong>Contribute</strong> — or ask your site owner to do it.</li>
-          <li>Flow check: in Power Automate, open <code class="cc">SystemDeclarationNotify</code> → <strong>Details</strong> → confirm its connections are healthy and, under <strong>Run only users</strong>, that app users are allowed to run it (adding the flow to the app normally handles this — verify once).</li>
+          <li><kbd class="ui">File</kbd> → <kbd class="ui">Save</kbd> → <kbd class="ui">Publish</kbd> → <kbd class="ui">Publish this version</kbd>.</li>
+          <li>Back on the app's detail page (or File → Share): <kbd class="ui">Share</kbd> the app with your users or a security group.</li>
+          <li>Give the same people <kbd class="ui">Contribute</kbd> permission on the <code class="cc">3rd party inventory</code> list — the app writes as the signed-in user, so without list rights their submits fail. The clicks: open the list → <kbd class="ui">gear icon</kbd> → <kbd class="ui">List settings</kbd> → <kbd class="ui">Permissions for this list</kbd> → <kbd class="ui">Grant Permissions</kbd> → enter the users or group → choose <kbd class="ui">Contribute</kbd> — or ask your site owner to do it.</li>
+          <li>Flow check: in Power Automate, open <code class="cc">SystemDeclarationNotify</code> → <kbd class="ui">Details</kbd> → confirm its connections are healthy and, under <kbd class="ui">Run only users</kbd>, that app users are allowed to run it (adding the flow to the app normally handles this — verify once).</li>
         </ol>
         <div class="note tip"><b>Blue underlines are fine</b>The App checker may show blue delegation hints on formulas that count or filter <code>colSystems</code>. Every one of those reads a local collection, not SharePoint — delegation doesn't apply, nothing is truncated, nothing blocks publishing.</div>
         <div class="note check"><b>Done</b>Published, shared, permissions in place, notification flowing. Business users can now declare their third-party systems in batches, IAM gets a mail per submission, and every record carries its responder and timestamp. The build is complete. 🏁</div>

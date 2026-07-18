@@ -111,6 +111,11 @@
   code.cc.copied{background:var(--ok) !important;color:#fff !important}
   code.cc.copied::after{content:"✓";opacity:1}
 
+  /* visual language — navy button = click it in the product UI; amber chip = value you enter; key cap = press it */
+  code.cc{background:#fdf1dd !important;color:#7a4d10 !important;border:1px solid #eed7ae;border-radius:6px;padding:1px 6px}
+  kbd.ui{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:.8em;font-weight:600;color:#fff;background:linear-gradient(180deg,#2a4a85,#1F3B6E);border:1px solid #142a52;border-radius:8px;padding:2px 9px 3px;line-height:1.4;white-space:nowrap;box-shadow:0 1px 0 #0d1c3a;vertical-align:baseline}
+  kbd.key{font-family:"IBM Plex Mono",monospace;font-size:.72em;font-weight:600;color:#3d4a63;background:linear-gradient(#fff,#eef0f5);border:1px solid #c3cad9;border-bottom-width:3px;border-radius:6px;padding:1px 7px;line-height:1.5;white-space:nowrap}
+
   table.cols{width:100%;border-collapse:collapse;margin:0 0 13px;font-size:18px;background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden}
   table.cols th{background:#f7f9fc;font-family:"IBM Plex Mono",monospace;font-size:15px;letter-spacing:.04em;text-transform:uppercase;color:var(--navy);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
   table.cols td{padding:7px 10px;border-bottom:1px solid var(--line-soft);vertical-align:top}
@@ -161,7 +166,11 @@
        - id: lowercase step id (a1, b3, c5 …)
        - .num text: the step id uppercase (A1, B3, C5 …)
        - every dark formula box: .fxlabel (Control · Property) then .fx with Copy button
-       - every control name / property value in prose: <code class="cc">…</code> (tap-to-copy)
+       - every control name / property value in prose: <code class="cc">…</code> (tap-to-copy, amber)
+       - every clickable UI target (menu item, button, tab, icon, property name picked in the
+         property dropdown, in-app button during tests): <kbd class="ui">…</kbd> (navy button)
+       - every keyboard press: <kbd class="key">Ctrl+A</kbd> — bold is for emphasis only,
+         NEVER for click targets or values
        - callouts: .note.why (explanation) .note.warn (gotcha) .note.tip (nice-to-know)
        - ALWAYS end with .note.check ("Check before moving on") then button.done
        - HTML-escape formulas: &amp; &lt; &gt; — the copied text must be the exact formula.

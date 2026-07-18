@@ -16,6 +16,11 @@ Every step is self-contained: exact click paths, copy buttons on every formula, 
 chips (⧉) on every name and value, and a verification checkpoint before moving on. Progress is
 tracked per part in the browser (localStorage).
 
+Pages use a uniform click-vs-enter visual language: **navy button chips** (`kbd.ui`) mark
+anything you click in Power Apps / SharePoint / Power Automate, **amber chips** (`code.cc`)
+mark values you enter (tap to copy), and **key caps** (`kbd.key`) mark keyboard presses.
+Bold is reserved for emphasis. See SPEC.md §9 for the full convention.
+
 ## Repo layout
 
 - `part1.html` / `part2.html` / `part3.html` — the guide pages (self-contained; only the IBM Plex fonts load externally)

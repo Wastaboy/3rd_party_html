@@ -433,8 +433,17 @@ Shared shell: `template.html` (CSS/JS lifted verbatim from the html_hustle examp
 Fonts: IBM Plex Sans/Serif/Mono via Google Fonts. Progress state in localStorage — KEY IS
 UNIQUE PER PAGE. Step anatomy: `<details class="step" id="a1">` → summary (dot / num / stitle /
 chevron) → body (`p.do` instructions, `ol.steps2` numbered sub-steps, `.fxlabel` + `.fx` dark
-copy boxes, `code.cc` tap-to-copy chips, `.note.why|warn|tip|check` callouts) → "Check before
-moving on" `.note.check` → `button.done`.
+copy boxes, `code.cc` tap-to-copy chips, `kbd.ui` / `kbd.key` markers, `.note.why|warn|tip|check`
+callouts) → "Check before moving on" `.note.check` → `button.done`.
+
+**Click-vs-enter visual language** (every page, uniform): anything the reader **clicks** in
+Power Apps / SharePoint / Power Automate — menu items, buttons, tabs, icons, property names
+picked in the property dropdown, and in-app buttons during test scripts — is a navy
+`<kbd class="ui">` button chip. Anything the reader **types or pastes** is an amber
+`<code class="cc">` tap-to-copy chip. Keyboard presses (`Ctrl+A`, `F5`, `Esc`, `Enter`, `Tab`)
+are `<kbd class="key">` key caps. Bold (`<strong>`) is reserved for emphasis and is never used
+for click targets or enterable values. Each page's intro carries a "How to read this guide —
+click vs enter" `.note.why` legend explaining the three markers.
 
 | Page | Title | Kicker | Steps | localStorage KEY |
 |---|---|---|---|---|
@@ -493,3 +502,5 @@ Footer cross-links on every page (relative hrefs):
 5. localStorage KEY unique per page (§9 table) so progress never bleeds across pages.
 6. Tone matches the example guide: imperative, reassuring, tap-to-copy chips for every control
    name and property value ("Paste, never retype").
+7. Marker discipline (§9 visual language): `kbd.ui` for every click target, `code.cc` for every
+   enterable value, `kbd.key` for every keyboard press — never plain bold for any of these.
