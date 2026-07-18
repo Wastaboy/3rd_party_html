@@ -38,24 +38,27 @@ Four have quirks (marked ⚠) — in formulas, always accept IntelliSense autoco
 | 6 | `Admin Accounts Used` | Text | Yes |
 | 7 | ⚠ `Permissions / Access levels` (lowercase l) | Multiline text | Yes |
 | 8 | `Support / Vendor Contact Information` | Text | Yes |
-| 9 | `IAM Role` | Text or Choice — record on worksheet | Yes |
+| 9 | `IAM Role` | Text — assumed | Yes |
 | 10 | `Access Link` | Text | Yes |
-| 11 | ⚠ `Division ` (TRAILING SPACE) | Text or Choice — record on worksheet | Yes |
-| 12 | `Status` | Text or Choice — record on worksheet | Yes |
-| 13 | `Submission Date` | Text or Date/Time — record on worksheet | Yes (auto) |
+| 11 | ⚠ `Division ` (TRAILING SPACE) | Text — assumed | Yes |
+| 12 | `Status` | Text — assumed | Yes |
+| 13 | `Submission Date` | Date and Time — assumed | Yes (auto) |
 | 14 | `IAM Notes` | Text | No |
 | 15 | `Submission Cycle` | Text | No |
-| 16 | `Handover Status` | Text or Choice — record on worksheet | Yes |
-| 17 | `Number of Accounts` | Text or Number — record on worksheet | Yes |
+| 16 | `Handover Status` | Text — assumed | Yes |
+| 17 | `Number of Accounts` | Text — assumed | Yes |
 | 18 | `Report Export` | Yes/No | No |
 | 19 | `Onboarded to IAM Platform` | Yes/No | No |
 | 20 | `Access Review Status` | Text | No |
 | 21 | `Review Frequency` | Text | No |
 
-**Column worksheet (A1):** the reader records the ACTUAL type of: `IAM Role`, `Division `,
-`Status`, `Handover Status`, `Number of Accounts`, `Submission Date`. Consumed at step C5.
-CSV evidence (`"Not involved"` lowercase in live data) suggests the choice-like columns are
-plain **text** — the primary C5 formula assumes text; a variant note covers Choice/Number/Date.
+**Assumed types (A1):** the six formerly-ambiguous columns are pinned by common sense + CSV
+evidence (`"Not involved"` lowercase in live data ⇒ plain text): `IAM Role`, `Division `,
+`Status`, `Handover Status`, `Number of Accounts` = **Single line of text**;
+`Submission Date` = **Date and Time**. The primary C5 formula is written for exactly these.
+To be confirmed against the real .msapp when the user provides it; if a type differs, the C5
+warn-note gives the one-line fix per column (Choice → `{Value: …}`, Number → `Value(…)`,
+Text date → `Text(Now(), …)`). A1 asks the reader only to glance and confirm, not to record.
 
 **A1 also:** (a) confirm `Application Name` is the renamed Title column and that no separate
 *required* Title column exists; (b) **add two Single line of text columns if absent** —
@@ -307,8 +310,9 @@ Set(gblShowConfirm, false)
 
 ### 6.8 Submit — write to SharePoint + notify (C5)
 
-`btnConfirmYes.OnSelect` — PRIMARY variant (all quirky columns are TEXT type; adapt per the
-A1 worksheet — see variants below). Requires "Formula-level error management" ON.
+`btnConfirmYes.OnSelect` — PRIMARY variant, written for the §2 assumed types (five text
+columns + Date/Time `Submission Date`; variants below if reality differs). Requires
+"Formula-level error management" ON.
 
 ```
 Set(gblSubmitting, true);
@@ -346,7 +350,7 @@ IfError(
 )
 ```
 
-**C5 adaptation warn-note (keyed to A1 worksheet):**
+**C5 adaptation warn-note (if a column's real type differs from the assumption):**
 - Column is **Choice** → wrap in a record: `'IAM Role': {Value: row.IAMRole}` (same for `'Division '`, `Status`, `'Handover Status'`).
 - `Number of Accounts` is **Number** → `'Number of Accounts': Value(row.NumAccts)`.
 - `Submission Date` is **Text** → `'Submission Date': Text(Now(), "yyyy-mm-dd hh:mm")`.
@@ -457,7 +461,7 @@ Footer cross-links on every page (relative hrefs):
 ### Step outline (authoritative)
 
 **part1.html — A1–A10**
-- A1 Verify the `3rd party inventory` list — 21-column checkpoint table (§2), column worksheet, Title check, add `Responder Name`/`Responder Email` if absent.
+- A1 Verify the `3rd party inventory` list — 21-column checkpoint table (§2) with assumed types (glance-and-confirm, no worksheet), Title check, add `Responder Name`/`Responder Email` if absent.
 - A2 Create blank tablet app; Settings (disable modern controls, enable formula-level error management); rename screen `scrMain`.
 - A3 Add the SharePoint data connection to `3rd party inventory` at `<YOUR-SITE-URL>`.
 - A4 App.OnStart (§6.1) + Run OnStart. Checkpoint: 5 collections in Variables pane, `colSystems` = 1 row. Note: re-running OnStart wipes in-progress rows (expected while building).

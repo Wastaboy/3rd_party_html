@@ -179,7 +179,7 @@
     <details class="step" id="a1" open>
       <summary><span class="dot"></span><span class="num">A1</span><span class="stitle">Verify the 3rd party inventory list</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
       <div class="body">
-        <p class="do">The list already exists — this step makes sure it looks exactly the way the formulas in Part 3 expect. Open <code>&lt;YOUR-SITE-URL&gt;</code> in the browser → <kbd class="ui">gear icon (top right)</kbd> → <kbd class="ui">Site contents</kbd> → click <code class="cc">3rd party inventory</code> → <kbd class="ui">gear icon</kbd> again → <kbd class="ui">List settings</kbd>. The <kbd class="ui">Columns</kbd> section lists every column with its <strong>Type</strong> right beside the name — that's where every answer below comes from. Compare it against this table:</p>
+        <p class="do">The list already exists — this step makes sure it looks exactly the way the formulas in Part 3 expect. Open <code>&lt;YOUR-SITE-URL&gt;</code> in the browser → <kbd class="ui">gear icon (top right)</kbd> → <kbd class="ui">Site contents</kbd> → click <code class="cc">3rd party inventory</code> → <kbd class="ui">gear icon</kbd> again → <kbd class="ui">List settings</kbd>. The <kbd class="ui">Columns</kbd> section lists every column with its <strong>Type</strong> right beside the name — that's where you confirm everything below. Compare it against this table:</p>
         <table class="cols">
           <tr><th>#</th><th>Display name</th><th>Expected type</th><th>Form fills it?</th></tr>
           <tr><td>1</td><td><code class="cc">Application Name</code></td><td>Text (likely the renamed Title)</td><td>Yes</td></tr>
@@ -190,32 +190,32 @@
           <tr><td>6</td><td><code class="cc">Admin Accounts Used</code></td><td>Text</td><td>Yes</td></tr>
           <tr><td>7</td><td>⚠ <code class="cc">Permissions / Access levels</code> — lowercase l</td><td>Multiline text</td><td>Yes</td></tr>
           <tr><td>8</td><td><code class="cc">Support / Vendor Contact Information</code></td><td>Text</td><td>Yes</td></tr>
-          <tr><td>9</td><td><code class="cc">IAM Role</code></td><td>Text or Choice — record it</td><td>Yes</td></tr>
+          <tr><td>9</td><td><code class="cc">IAM Role</code></td><td>Text — assumed</td><td>Yes</td></tr>
           <tr><td>10</td><td><code class="cc">Access Link</code></td><td>Text</td><td>Yes</td></tr>
-          <tr><td>11</td><td>⚠ <code>Division␠</code> — <strong>trailing space</strong> in the name</td><td>Text or Choice — record it</td><td>Yes</td></tr>
-          <tr><td>12</td><td><code class="cc">Status</code></td><td>Text or Choice — record it</td><td>Yes</td></tr>
-          <tr><td>13</td><td><code class="cc">Submission Date</code></td><td>Text or Date/Time — record it</td><td>Yes (auto)</td></tr>
+          <tr><td>11</td><td>⚠ <code>Division␠</code> — <strong>trailing space</strong> in the name</td><td>Text — assumed</td><td>Yes</td></tr>
+          <tr><td>12</td><td><code class="cc">Status</code></td><td>Text — assumed</td><td>Yes</td></tr>
+          <tr><td>13</td><td><code class="cc">Submission Date</code></td><td>Date and Time — assumed</td><td>Yes (auto)</td></tr>
           <tr><td>14</td><td><code class="cc">IAM Notes</code></td><td>Text</td><td>No</td></tr>
           <tr><td>15</td><td><code class="cc">Submission Cycle</code></td><td>Text</td><td>No</td></tr>
-          <tr><td>16</td><td><code class="cc">Handover Status</code></td><td>Text or Choice — record it</td><td>Yes</td></tr>
-          <tr><td>17</td><td><code class="cc">Number of Accounts</code></td><td>Text or Number — record it</td><td>Yes</td></tr>
+          <tr><td>16</td><td><code class="cc">Handover Status</code></td><td>Text — assumed</td><td>Yes</td></tr>
+          <tr><td>17</td><td><code class="cc">Number of Accounts</code></td><td>Text — assumed</td><td>Yes</td></tr>
           <tr><td>18</td><td><code class="cc">Report Export</code></td><td>Yes/No</td><td>No</td></tr>
           <tr><td>19</td><td><code class="cc">Onboarded to IAM Platform</code></td><td>Yes/No</td><td>No</td></tr>
           <tr><td>20</td><td><code class="cc">Access Review Status</code></td><td>Text</td><td>No</td></tr>
           <tr><td>21</td><td><code class="cc">Review Frequency</code></td><td>Text</td><td>No</td></tr>
         </table>
         <div class="pane">
-          <p class="ph">Your column worksheet — fill this in now, Part 3 needs it</p>
-          <p>In List settings, click each of these six columns and write down its <strong>actual type</strong> (Single line of text? Choice? Number? Date and Time?):</p>
+          <p class="ph">Six assumed types — glance and confirm</p>
+          <p>Six columns marked "assumed" above had ambiguous types; this guide commits to the common-sense ones below (the live list data backs them). While you're in List settings, glance at each — and if one differs, nothing breaks: step C5 (Part 3) has a one-line fix per column, clearly marked.</p>
           <ol>
-            <li><code class="cc">IAM Role</code> — Text or Choice?</li>
-            <li><code>Division␠</code> (the one with the trailing space) — Text or Choice?</li>
-            <li><code class="cc">Status</code> — Text or Choice?</li>
-            <li><code class="cc">Handover Status</code> — Text or Choice?</li>
-            <li><code class="cc">Number of Accounts</code> — Text or Number?</li>
-            <li><code class="cc">Submission Date</code> — Text or Date and Time?</li>
+            <li><code class="cc">IAM Role</code> — Single line of text</li>
+            <li><code>Division␠</code> (the one with the trailing space) — Single line of text</li>
+            <li><code class="cc">Status</code> — Single line of text</li>
+            <li><code class="cc">Handover Status</code> — Single line of text</li>
+            <li><code class="cc">Number of Accounts</code> — Single line of text</li>
+            <li><code class="cc">Submission Date</code> — Date and Time</li>
           </ol>
-          <p>Step C5 (Part 3) has one formula line per answer — you'll adapt six lines at most, and the guide shows exactly how.</p>
+          <p>Only note a column down if its type is <em>different</em> from the list above — that note is all C5 needs.</p>
         </div>
         <p class="do"><strong>Two checks and one addition while you're here:</strong></p>
         <ol class="steps2">
@@ -223,7 +223,7 @@
           <li><strong>Add the audit columns</strong> (skip if they already exist). List settings → <kbd class="ui">Create column</kbd> → name <code class="cc">Responder Name</code> → type <kbd class="ui">Single line of text</kbd> → <kbd class="ui">OK</kbd> (or, from the list view itself: <kbd class="ui">+ Add column</kbd> → <kbd class="ui">Single line of text</kbd>). Repeat for <code class="cc">Responder Email</code>.</li>
         </ol>
         <div class="note warn"><b>The quirky names are load-bearing</b>Four column names contain deliberate-looking accidents — <code>Vendor/ Provider Name</code> (space after the slash), <code>Business owner</code> (lowercase o), <code>Permissions / Access levels</code> (lowercase l), and <code>Division </code> (trailing space). <strong>Do not rename them</strong> — live data and the formulas in this guide both use them as-is. In Power Apps you'll always accept IntelliSense autocomplete rather than hand-typing these. And when this guide writes <code>Division␠</code>, the ␠ just marks the invisible trailing space — on screen the column looks like plain "Division".</div>
-        <div class="note check"><b>Check before moving on</b>All 21 columns present with matching names · your worksheet has six recorded types · no separate required Title column · <code>Responder Name</code> and <code>Responder Email</code> exist as Single line of text columns.</div>
+        <div class="note check"><b>Check before moving on</b>All 21 columns present with matching names · the six assumed types glanced at (noted any that differ) · no separate required Title column · <code>Responder Name</code> and <code>Responder Email</code> exist as Single line of text columns.</div>
         <button class="done" type="button">Mark step done</button>
       </div>
     </details>
