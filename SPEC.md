@@ -461,7 +461,7 @@ Footer cross-links on every page (relative hrefs):
 ### Step outline (authoritative)
 
 **part1.html — A1–A10**
-- A1 Verify the `3rd party inventory` list — 21-column checkpoint table (§2) with assumed types (glance-and-confirm, no worksheet), Title check, add `Responder Name`/`Responder Email` if absent.
+- A1 Check the `3rd party inventory` list — 21-column checkpoint table (§2) with assumed types (glance-and-confirm, no worksheet), Title check, add `Responder Name`/`Responder Email` if absent.
 - A2 Create blank tablet app; Settings (disable modern controls, enable formula-level error management); rename screen `scrMain`.
 - A3 Add the SharePoint data connection to `3rd party inventory` at `<YOUR-SITE-URL>`.
 - A4 App.OnStart (§6.1) + Run OnStart. Checkpoint: 5 collections in Variables pane, `colSystems` = 1 row. Note: re-running OnStart wipes in-progress rows (expected while building).

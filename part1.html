@@ -176,7 +176,7 @@
     <h2 class="sec">First, the list</h2>
 
     <details class="step" id="a1" open>
-      <summary><span class="dot"></span><span class="num">A1</span><span class="stitle">Verify the 3rd party inventory list</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <summary><span class="dot"></span><span class="num">A1</span><span class="stitle">Check the 3rd party inventory list</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
       <div class="body">
         <p class="do">The list already exists — this step makes sure it looks exactly the way the formulas in Part 3 expect. Open <code>&lt;YOUR-SITE-URL&gt;</code> in the browser → <kbd class="ui">gear icon (top right)</kbd> → <kbd class="ui">Site contents</kbd> → click <code class="cc">3rd party inventory</code> → <kbd class="ui">gear icon</kbd> again → <kbd class="ui">List settings</kbd>. The <kbd class="ui">Columns</kbd> section lists every column with its <strong>Type</strong> right beside the name — that's where you confirm everything below. Compare it against this table:</p>
         <table class="cols">
@@ -299,7 +299,7 @@ ClearCollect(colSystems, {RowID: GUID(), SeqNo: 1, AppName: "", Vendor: "", BizO
         </ol>
         <p class="fxlabel">lblUserBadge · Text</p>
         <div class="fx"><button class="copy" type="button">Copy</button><code>User().FullName</code></div>
-        <div class="note tip"><b>Brand colour, one variable</b><code>gblColorBrand</code> is the bank red set in OnStart. If branding ever changes, one line in OnStart re-skins the app.</div>
+        <div class="note tip"><b>Brand colour, one variable</b><code>gblColorBrand</code> is the brand red set in OnStart. If branding ever changes, one line in OnStart re-skins the app.</div>
         <div class="note check"><b>Check before moving on</b>A red band across the top: bold title, smaller subtitle, and your own name sitting right-aligned in the band.</div>
         <button class="done" type="button">Mark step done</button>
       </div>
