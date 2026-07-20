@@ -1,4 +1,11 @@
-/* Password gate for static sites — curtain, not a vault.
+/* DORMANT in this repo: deliberately not loaded by any page. A password
+   curtain plus this guide's account/bank/O365 vocabulary got the site
+   classified as phishing by Zscaler (2026-07-20). Kept on disk for possible
+   re-use after recategorization clears — reword KICKER/TITLE/SUBTITLE away
+   from official-document framing before re-adding, and expect to re-submit
+   at sitereview.zscaler.com. See docs/superpowers/specs/2026-07-20-zscaler-deflag-design.md.
+
+   Password gate for static sites — curtain, not a vault.
    Fill the constants below when installing. To change the password:
    printf '%s' 'newpassword' | sha256sum  → paste the hex into HASH.
    Bump KEY (e.g. _v2) to force every device to re-enter the password. */
